@@ -767,9 +767,6 @@ function kirimKeServer(payload){
 
   const url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify(payload));
   dbg('info','Payload size: '+JSON.stringify(payload).length+' chars');
-  dbg('info','Mengirim via fetch...');
-  showToast('📡 Mengirim data...');
-
   dbg('info','Mengirim via fetch POST...');
   showToast('📡 Mengirim data...');
 
