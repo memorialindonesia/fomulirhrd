@@ -770,25 +770,45 @@ function kirimKeServer(payload){
   dbg('info','Mengirim via fetch...');
   showToast('📡 Mengirim data...');
 
-  dbg('info','Mengirim via script tag injection...');
+  dbg('info','Mengirim via fetch POST...');
   showToast('📡 Mengirim data...');
 
-  // Script tag injection — satu-satunya cara yang benar-benar menembus
-  // Google Apps Script redirect dari domain manapun termasuk GitHub Pages
-  const s = document.createElement('script');
-  s.src = url + '&callback=__asCallback&t=' + Date.now();
-  s.onload = ()=>{
-    dbg('ok','✅ Script tag loaded — data sampai ke Apps Script!');
-    showToast('✅ Data terkirim!');
-    try{ document.head.removeChild(s); }catch(e){}
-  };
-  s.onerror = ()=>{
-    dbg('warn','Script onerror (bisa normal untuk JSONP) — cek Executions');
-    showToast('📡 Cek Executions Apps Script');
-    try{ document.head.removeChild(s); }catch(e){}
-  };
-  document.head.appendChild(s);
-  dbg('info','Script tag injected ke: '+url.slice(0,60)+'...');
+  // POST request — tidak ada batasan panjang URL
+  // Apps Script menerima POST via doPost(e)
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'data=' + encodeURIComponent(JSON.stringify(payload))
+  })
+  .then(()=>{
+    dbg('ok','✅ POST fetch sent (no-cors)');
+    dbg('warn','Cek Executions di Apps Script jam '+new Date().toLocaleTimeString());
+    showToast('✅ Data dikirim!');
+  })
+  .catch(e=>{
+    dbg('err','❌ POST error: '+e);
+    // Fallback: GET dengan data diperkecil
+    dbg('info','Fallback: GET dengan data ringkas...');
+    const mini = {
+      timestamp: payload.timestamp,
+      posisi: payload.posisi,
+      f_nama: payload.f_nama,
+      f_hp: payload.f_hp,
+      f_email: payload.f_email,
+      f_ktp: payload.f_ktp,
+      f_tgl_lahir: payload.f_tgl_lahir,
+      f_jk: payload.f_jk,
+      f_alamat_ktp: payload.f_alamat_ktp,
+      f_gaji_harap: payload.f_gaji_harap,
+      tanggal_tersedia: payload.tanggal_tersedia,
+      _full: '1'
+    };
+    const miniUrl = APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify(mini));
+    fetch(miniUrl,{method:'GET',mode:'no-cors'})
+      .then(()=>dbg('ok','✅ Fallback GET sent'))
+      .catch(e2=>dbg('err','❌ Fallback error: '+e2));
+  });
 }
 
 // Debug helpers
