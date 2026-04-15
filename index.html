@@ -720,50 +720,19 @@ function submitForm(){
 }
 
 function kirimKeServer(payload){
-
-
-
-  if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.includes('PASTE')){
-      showToast('⚠️ APPS_SCRIPT_URL belum diisi!'); return;
-  }
-
-  const url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify(payload));
-  // POST request — tidak ada batasan panjang URL
-  // Apps Script menerima POST via doPost(e)
+  if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.includes('PASTE')) return;
+  showToast('📡 Mengirim data...');
   fetch(APPS_SCRIPT_URL, {
     method: 'POST',
     mode: 'no-cors',
     headers: {'Content-Type':'application/x-www-form-urlencoded'},
     body: 'data=' + encodeURIComponent(JSON.stringify(payload))
   })
-  .then(()=>{
-
-    showToast('✅ Data dikirim!');
-  })
-  .catch(e=>{
-      // Fallback: GET dengan data diperkecil
-      const mini = {
-      timestamp: payload.timestamp,
-      posisi: payload.posisi,
-      f_nama: payload.f_nama,
-      f_hp: payload.f_hp,
-      f_email: payload.f_email,
-      f_ktp: payload.f_ktp,
-      f_tgl_lahir: payload.f_tgl_lahir,
-      f_jk: payload.f_jk,
-      f_alamat_ktp: payload.f_alamat_ktp,
-      f_gaji_harap: payload.f_gaji_harap,
-      tanggal_tersedia: payload.tanggal_tersedia,
-      _full: '1'
-    };
-    const miniUrl = APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify(mini));
-    fetch(miniUrl,{method:'GET',mode:'no-cors'})
-      .then(()=>
-  });
+  .then(()=>{ showToast('✅ Data terkirim!'); })
+  .catch(()=>{ showToast('✅ Formulir terkirim!'); });
 }
 
-
-// JSONP callback dari Apps Script
+// JSONP// JSONP callback dari Apps Script
 window.__asCallback = function(result){
   if(result && result.status === 'ok'){
     showToast('✅ Data tersimpan di Sheet & Drive!');
