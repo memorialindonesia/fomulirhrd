@@ -2,11 +2,13 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://script.google.com https://script.googleusercontent.com https://fonts.googleapis.com https://fonts.gstatic.com https://discord.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://script.google.com https://script.googleusercontent.com;">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tes Seleksi Karyawan | PT. KPUS</title>
+<title>Formulir Lamaran Kerja | Lestari Memorial Park</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+
 
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
 :root {
@@ -15,535 +17,697 @@
   --white:#FFFFFF; --offwhite:#F7F8FC; --gray:#E8ECF5; --mid:#7A849E; --dark:#1A2240;
   --green:#15803D; --greenl:#DCFCE7; --red:#B91C1C; --redl:#FEE2E2;
 }
+
 body { font-family:'DM Sans',sans-serif; background:var(--navy); min-height:100vh; color:var(--dark); overflow-x:hidden; }
 body::before {
   content:''; position:fixed; inset:0;
-  background:radial-gradient(ellipse 80% 50% at 20% 20%,rgba(26,64,160,.35) 0%,transparent 60%),
-             radial-gradient(ellipse 60% 40% at 80% 80%,rgba(212,168,67,.12) 0%,transparent 50%);
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 20%,rgba(26,64,160,.35) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%,rgba(212,168,67,.12) 0%,transparent 50%);
   pointer-events:none; z-index:0;
 }
+
 .screen { display:none; position:relative; z-index:1; min-height:100vh; }
 .screen.active { display:flex; flex-direction:column; }
-.sc { align-items:center; justify-content:center; padding:24px 20px; text-align:center; }
+.sc { align-items:center; justify-content:center; padding:40px 20px; text-align:center; }
 
 .badge { display:inline-flex; align-items:center; gap:8px; background:rgba(212,168,67,.15); border:1px solid rgba(212,168,67,.4); color:var(--gold); font-family:'Syne',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:6px 16px; border-radius:100px; margin-bottom:28px; }
 .ttl { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(26px,6vw,44px); color:var(--white); line-height:1.05; margin-bottom:8px; letter-spacing:-1px; }
 .ttl .ac { color:var(--gold); display:block; }
-.sub { font-size:15px; color:rgba(255,255,255,.5); margin-bottom:32px; line-height:1.6; max-width:460px; }
+.sub { font-size:15px; color:rgba(255,255,255,.5); margin-bottom:32px; line-height:1.6; max-width:500px; }
 
-.card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:16px; padding:24px; width:100%; max-width:460px; margin-bottom:20px; }
-.clabel { font-size:11px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; text-align:left; }
-.inp { width:100%; background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.15); border-radius:10px; padding:12px 16px; font-family:'DM Sans',sans-serif; font-size:16px; color:var(--white); outline:none; transition:border-color .2s; margin-bottom:10px; }
-.inp:last-of-type { margin-bottom:0; }
+.card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:16px; padding:24px; width:100%; max-width:500px; margin-bottom:20px; text-align:left; }
+.clabel { font-size:11px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px; margin-top:16px; }
+.clabel:first-child { margin-top:0; }
+.inp { width:100%; background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.15); border-radius:10px; padding:12px 16px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--white); outline:none; transition:border-color .2s; margin-bottom:8px; }
 .inp::placeholder { color:rgba(255,255,255,.3); }
 .inp:focus { border-color:var(--gold); }
-.errmsg { color:#FCA5A5; font-size:13px; min-height:18px; margin-top:6px; }
+select.inp option { background:var(--navy); }
+.errmsg { color:#FCA5A5; font-size:13px; min-height:18px; margin-top:4px; }
 
 .btn-gold { background:var(--gold); color:var(--navy); font-family:'Syne',sans-serif; font-size:15px; font-weight:800; padding:15px 44px; border:none; border-radius:13px; cursor:pointer; transition:transform .15s,box-shadow .15s; box-shadow:0 4px 24px rgba(212,168,67,.3); }
 .btn-gold:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(212,168,67,.4); }
-.btn-ghost { background:transparent; color:rgba(255,255,255,.45); font-family:'DM Sans',sans-serif; font-size:13px; border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:10px 24px; cursor:pointer; margin-top:10px; transition:color .2s,border-color .2s; }
-.btn-ghost:hover { color:var(--white); border-color:rgba(255,255,255,.3); }
 
-/* ADMIN */
-#screen-admin { background:var(--offwhite); }
-.admin-wrap { max-width:580px; width:100%; padding:28px 20px 80px; margin:0 auto; }
-.admin-header { background:var(--navy); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 2px 20px rgba(0,0,0,.3); }
-.admin-header-title { font-family:'Syne',sans-serif; font-size:14px; font-weight:800; color:var(--white); }
-.admin-header-sub { font-size:11px; color:rgba(255,255,255,.4); margin-top:1px; }
-.btn-logout { background:rgba(255,255,255,.08); color:rgba(255,255,255,.6); font-family:'Syne',sans-serif; font-size:11px; font-weight:700; padding:7px 14px; border:1px solid rgba(255,255,255,.12); border-radius:8px; cursor:pointer; }
-.sec-title { font-family:'Syne',sans-serif; font-size:13px; font-weight:800; color:var(--navy); text-transform:uppercase; letter-spacing:1.5px; margin:24px 0 12px; }
-.gen-box { background:var(--white); border:1.5px solid var(--gray); border-radius:16px; padding:20px; margin-bottom:16px; box-shadow:0 2px 12px rgba(0,0,0,.06); }
-.gen-fields { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
-.inp-light { width:100%; background:var(--offwhite); border:1.5px solid var(--gray); border-radius:10px; padding:11px 14px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--dark); outline:none; transition:border-color .2s; }
-.inp-light:focus { border-color:var(--blue); }
-.inp-light::placeholder { color:var(--mid); }
-.btn-gen { background:var(--navy); color:var(--white); font-family:'Syne',sans-serif; font-size:14px; font-weight:800; padding:13px 32px; border:none; border-radius:11px; cursor:pointer; width:100%; transition:background .15s; }
-.btn-gen:hover { background:var(--blue); }
-.code-result { background:linear-gradient(135deg,var(--navy),var(--blue)); border-radius:14px; padding:20px; text-align:center; margin-top:14px; display:none; }
-.code-result.show { display:block; }
-.cr-label { font-size:11px; color:rgba(255,255,255,.45); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
-.cr-name { font-size:13px; color:rgba(255,255,255,.6); margin-bottom:6px; }
-.cr-kode { font-family:'Syne',sans-serif; font-size:clamp(40px,10vw,56px); font-weight:800; color:var(--gold); letter-spacing:10px; margin-bottom:14px; }
-.cr-btns { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
-.btn-copy { background:var(--gold); color:var(--navy); font-family:'Syne',sans-serif; font-size:12px; font-weight:800; padding:9px 20px; border:none; border-radius:8px; cursor:pointer; }
-.btn-wa   { background:#25D366; color:#fff; font-family:'Syne',sans-serif; font-size:12px; font-weight:800; padding:9px 20px; border:none; border-radius:8px; cursor:pointer; }
-.cr-note  { font-size:11px; color:rgba(255,255,255,.35); margin-top:10px; }
-.log-wrap { background:var(--white); border:1.5px solid var(--gray); border-radius:14px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.06); }
-.log-tbl { width:100%; border-collapse:collapse; font-size:13px; }
-.log-tbl th { background:var(--navy); color:var(--gold); font-family:'Syne',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:10px 12px; text-align:left; }
-.log-tbl td { padding:10px 12px; color:var(--dark); border-bottom:1px solid var(--gray); }
-.log-tbl tr:last-child td { border-bottom:none; }
-.log-tbl tr:hover td { background:#F0F4FF; }
-.tag-used  { background:var(--greenl); color:var(--green); font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; }
-.tag-fresh { background:#FEF9C3; color:#A16207; font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; }
-.empty-log { text-align:center; padding:28px; color:var(--mid); font-size:14px; }
-
-/* KODE & INTRO */
-#screen-kode.sc, #screen-intro.sc { min-height:100vh; }
-.stats-row { display:flex; gap:12px; justify-content:center; margin-bottom:36px; flex-wrap:wrap; }
-.stat-pill { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px 20px; color:var(--white); }
+.stats-row { display:flex; gap:12px; justify-content:center; margin-bottom:32px; flex-wrap:wrap; }
+.stat-pill { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px 20px; }
 .stat-num { font-family:'Syne',sans-serif; font-weight:800; font-size:22px; color:var(--gold); line-height:1; }
 .stat-lbl { font-size:11px; color:rgba(255,255,255,.45); margin-top:2px; text-transform:uppercase; letter-spacing:1px; }
 
-/* QUIZ */
-#screen-quiz { background:var(--offwhite); }
-.qhdr { background:var(--navy); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:100; box-shadow:0 2px 20px rgba(0,0,0,.3); }
-.qhdr-sub { font-size:11px; color:rgba(255,255,255,.4); margin-top:1px; }
-.timer-block { display:flex; flex-direction:column; align-items:center; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:6px 14px; min-width:86px; }
-.timer-lbl { font-size:9px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:1px; }
-.timer-val { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; color:var(--gold); letter-spacing:1px; line-height:1.1; }
-.timer-val.warn { color:#FCA5A5; }
-.timer-val.danger { color:#EF4444; animation:blink 1s infinite; }
-@keyframes blink { 0%,100%{opacity:1}50%{opacity:.4} }
-.pbwrap { background:rgba(255,255,255,.1); border-radius:100px; height:4px; overflow:hidden; width:100%; max-width:130px; }
-.pbfill { height:100%; background:var(--gold); border-radius:100px; transition:width .4s; }
-.qbody { padding:28px 20px 120px; max-width:740px; margin:0 auto; }
-.qmeta { display:flex; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
-.qcounter { font-size:12px; font-weight:600; color:var(--mid); text-transform:uppercase; letter-spacing:1.5px; }
-.qtag { display:inline-block; background:var(--navy); color:var(--gold); font-family:'Syne',sans-serif; font-size:11px; font-weight:700; padding:3px 10px; border-radius:6px; }
-.qlvl { font-size:10px; font-weight:700; padding:3px 8px; border-radius:6px; }
-.qlvl.easy   { background:#DCFCE7; color:#15803D; }
-.qlvl.medium { background:#FEF9C3; color:#A16207; }
-.qlvl.hard   { background:#FEE2E2; color:#B91C1C; }
-.qcat { font-size:10px; color:var(--mid); background:var(--gray); padding:3px 8px; border-radius:6px; }
-.qtxt { font-family:'Syne',sans-serif; font-size:clamp(15px,3.5vw,20px); font-weight:700; color:var(--dark); line-height:1.5; margin-bottom:20px; white-space:pre-line; }
-.choices { display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
-.cbtn { display:flex; align-items:flex-start; gap:14px; background:var(--white); border:2px solid var(--gray); border-radius:14px; padding:14px 18px; cursor:pointer; text-align:left; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--dark); line-height:1.4; transition:border-color .15s,background .15s,transform .1s; width:100%; }
-.cbtn:hover:not(:disabled) { border-color:var(--lblue); background:#EEF3FF; transform:translateX(3px); }
-.cbtn:disabled { cursor:default; }
-.cletter { flex-shrink:0; width:30px; height:30px; border-radius:50%; background:var(--gray); font-family:'Syne',sans-serif; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center; color:var(--mid); }
-.txt-ans-wrap { margin-bottom:24px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-.txt-ans-inp { background:var(--white); border:2px solid var(--gray); border-radius:12px; padding:14px 18px; font-family:'Syne',sans-serif; font-size:20px; font-weight:700; color:var(--dark); outline:none; transition:border-color .2s; text-align:center; letter-spacing:2px; width:180px; }
-.txt-ans-inp:focus { border-color:var(--lblue); }
-.btn-cek { background:var(--navy); color:var(--white); font-family:'Syne',sans-serif; font-size:14px; font-weight:700; padding:14px 24px; border:none; border-radius:12px; cursor:pointer; transition:background .15s; }
-.btn-cek:hover { background:var(--blue); }
-.fbbox { border-radius:12px; padding:14px 18px; font-size:14px; line-height:1.6; margin-bottom:20px; display:none; }
-.btn-next { display:none; }
+/* FORM SCREEN */
+#screen-form { background:var(--offwhite); }
+.form-header { background:var(--navy); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 2px 20px rgba(0,0,0,.3); }
+.fhdr-title { font-family:'Syne',sans-serif; font-size:14px; font-weight:800; color:var(--white); }
+.fhdr-sub { font-size:11px; color:rgba(255,255,255,.4); margin-top:1px; }
+.step-wrap { display:flex; align-items:center; gap:6px; }
+.step-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.2); transition:background .3s; }
+.step-dot.active { background:var(--gold); }
+.step-dot.done { background:rgba(212,168,67,.45); }
 
-/* RESULT — simple, tidak ada info skor */
+.form-body { max-width:700px; margin:0 auto; padding:28px 20px 100px; }
+.sec-card { background:var(--white); border:1.5px solid var(--gray); border-radius:16px; padding:24px; margin-bottom:20px; box-shadow:0 2px 12px rgba(0,0,0,.06); }
+.sec-title { font-family:'Syne',sans-serif; font-size:12px; font-weight:800; color:var(--navy); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+.sec-title::after { content:''; flex:1; height:1px; background:var(--gray); }
+
+.inp-l { width:100%; background:var(--offwhite); border:1.5px solid var(--gray); border-radius:10px; padding:11px 14px; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--dark); outline:none; transition:border-color .2s; }
+.inp-l:focus { border-color:var(--blue); }
+.inp-l::placeholder { color:var(--mid); }
+select.inp-l { cursor:pointer; }
+
+.field-group { display:grid; gap:12px; margin-bottom:14px; }
+.field-group.col2 { grid-template-columns:1fr 1fr; }
+.field-group.col3 { grid-template-columns:1fr 1fr 1fr; }
+.field-wrap { display:flex; flex-direction:column; gap:5px; }
+.field-label { font-size:12px; font-weight:600; color:var(--mid); letter-spacing:.3px; }
+.req { color:var(--red); }
+
+/* yes/no table */
+.yn-table { width:100%; border-collapse:collapse; font-size:13px; }
+.yn-table th { background:var(--navy); color:var(--gold); font-family:'Syne',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:10px 12px; text-align:left; }
+.yn-table th.center { text-align:center; width:55px; }
+.yn-table td { padding:10px 12px; border-bottom:1px solid var(--gray); font-size:13px; color:var(--dark); line-height:1.4; vertical-align:middle; }
+.yn-table tr:last-child td { border-bottom:none; }
+.yn-table tr:hover td { background:#F0F4FF; }
+.yn-radio { display:flex; justify-content:center; }
+.yn-radio input[type=radio] { display:none; }
+.yn-radio label { display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; border:2px solid var(--gray); cursor:pointer; transition:all .2s; font-size:12px; font-weight:700; color:transparent; }
+.yn-radio input[type=radio]:checked + label { border-color:var(--blue); background:var(--blue); color:white; }
+
+/* form footer */
+.form-footer { position:fixed; bottom:0; left:0; right:0; background:var(--white); border-top:1px solid var(--gray); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; z-index:100; box-shadow:0 -4px 20px rgba(0,0,0,.08); }
+.progress-bar-wrap { flex:1; background:var(--gray); border-radius:100px; height:6px; overflow:hidden; }
+.progress-bar-fill { height:100%; background:var(--blue); border-radius:100px; transition:width .4s ease; }
+.progress-label { font-family:'Syne',sans-serif; font-size:11px; font-weight:700; color:var(--mid); white-space:nowrap; }
+.btn-nav { background:var(--navy); color:var(--white); font-family:'Syne',sans-serif; font-size:13px; font-weight:800; padding:11px 22px; border:none; border-radius:10px; cursor:pointer; transition:background .15s; white-space:nowrap; }
+.btn-nav:hover { background:var(--blue); }
+.btn-nav.prev { background:var(--offwhite); color:var(--mid); border:1.5px solid var(--gray); }
+.btn-nav.prev:hover { background:var(--gray); color:var(--dark); }
+
+/* result */
 #screen-result { background:var(--navy); align-items:center; justify-content:center; padding:40px 20px; text-align:center; }
-.res-done-icon { font-size:72px; margin-bottom:24px; }
-.res-done-title { font-family:'Syne',sans-serif; font-size:clamp(22px,5vw,32px); font-weight:800; color:var(--white); margin-bottom:12px; }
-.res-done-sub { font-size:15px; color:rgba(255,255,255,.5); max-width:400px; margin:0 auto 32px; line-height:1.7; }
+.res-badge { width:100px; height:100px; border-radius:50%; background:rgba(212,168,67,.15); border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; font-size:48px; margin:0 auto 24px; }
+.res-msg { font-family:'Syne',sans-serif; font-size:clamp(22px,5vw,32px); font-weight:800; color:var(--white); margin-bottom:8px; }
+.res-sub { font-size:14px; color:rgba(255,255,255,.45); max-width:420px; margin:0 auto 28px; line-height:1.6; }
+.res-detail { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:20px; max-width:400px; width:100%; text-align:left; margin-bottom:24px; }
+.rd-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:13px; color:rgba(255,255,255,.5); }
+.rd-row:last-child { border-bottom:none; }
+.rd-row span:last-child { color:var(--gold); font-weight:600; font-family:'Syne',sans-serif; }
 
-/* Status box — tanpa info skor/jawaban */
-.send-status { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:16px; padding:22px 26px; max-width:380px; width:100%; text-align:left; }
-.send-status-title { font-family:'Syne',sans-serif; font-size:11px; font-weight:800; color:var(--gold); text-transform:uppercase; letter-spacing:2px; margin-bottom:16px; }
-.send-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:14px; color:rgba(255,255,255,.65); }
-.send-row:last-child { border-bottom:none; }
-.send-icon { font-size:18px; width:26px; text-align:center; flex-shrink:0; }
-.send-icon.spin { display:inline-block; animation:spin 1s linear infinite; }
-@keyframes spin { to{transform:rotate(360deg)} }
+.toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px); background:rgba(185,28,28,.92); color:white; font-family:'Syne',sans-serif; font-size:13px; font-weight:700; padding:12px 24px; border-radius:100px; opacity:0; transition:opacity .3s,transform .3s; z-index:999; pointer-events:none; white-space:nowrap; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-@media(max-width:480px){ .pbwrap{display:none;} .txt-ans-wrap{flex-direction:column;align-items:flex-start;} }
+@media(max-width:560px){
+  .field-group.col2,.field-group.col3 { grid-template-columns:1fr; }
+}
 </style>
 </head>
 <body>
 
-<!-- 1: ADMIN LOGIN -->
-<div id="screen-admin-login" class="screen sc active">
-  <div class="badge">● PT. KPUS Assessment System</div>
-  <div class="sub">Panel Administrator. Masukkan password untuk membuka sistem.</div>
+<!-- ══════════ SCREEN 0: PASSWORD ══════════ -->
+<div id="screen-login" class="screen sc active">
+  <div class="badge">● Lestari Memorial Park — HR System</div>
+  <div class="ttl">Portal<span class="ac">Lamaran Kerja</span></div>
+  <div class="sub">Masukkan kode akses yang diberikan oleh tim HR untuk membuka formulir lamaran.</div>
+
   <div class="card">
-    <div class="clabel">Password Administrator</div>
-    <input type="password" id="admin-pw-inp" class="inp" placeholder="Password admin..."
-      onkeydown="if(event.key==='Enter')adminLogin()">
-    <div class="errmsg" id="admin-pw-err"></div>
+    <div class="clabel">Kode Akses</div>
+    <div style="position:relative;">
+      <input type="password" id="login-pw" class="inp"
+        placeholder="Masukkan kode akses..."
+        style="letter-spacing:3px;padding-right:48px;margin-bottom:0;"
+        onkeydown="if(event.key==='Enter')doLogin()">
+      <button onclick="togglePw()" id="pw-toggle"
+        style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);font-size:18px;line-height:1;padding:0;">👁</button>
+    </div>
+    <div class="errmsg" id="login-err"></div>
   </div>
-  <button class="btn-gold" onclick="adminLogin()">Masuk →</button>
-  <button class="btn-ghost" onclick="showScreen('screen-kode')">Saya Peserta — Punya Kode →</button>
+
+  <button class="btn-gold" onclick="doLogin()">Buka Formulir →</button>
 </div>
 
-<!-- 2: ADMIN PANEL -->
-<div id="screen-admin" class="screen">
-  <div class="admin-header">
-    <div>
-      <div class="admin-header-title">⚙️ Admin Panel PT. KPUS</div>
-      <div class="admin-header-sub">Generate kode akses untuk peserta</div>
-    </div>
-    <button class="btn-logout" onclick="adminLogout()">Keluar</button>
+<!-- ══════════ SCREEN 1: INTRO ══════════ -->
+<div id="screen-intro" class="screen sc">
+  <div class="badge">● Lestari Memorial Park — HR System</div>
+  <div class="ttl">Formulir<span class="ac">Lamaran Kerja</span></div>
+  <div class="sub">Isi data dengan lengkap dan jujur. Semua informasi bersifat rahasia dan hanya digunakan untuk keperluan rekrutmen.</div>
+
+  <div class="stats-row">
+    <div class="stat-pill"><div class="stat-num">6</div><div class="stat-lbl">Bagian</div></div>
+    <div class="stat-pill"><div class="stat-num">±10'</div><div class="stat-lbl">Estimasi</div></div>
+    <div class="stat-pill"><div class="stat-num">100%</div><div class="stat-lbl">Rahasia</div></div>
   </div>
-  <div class="admin-wrap">
-    <div class="sec-title">Generate Kode Akses Peserta</div>
-    <div class="gen-box">
-      <div class="gen-fields">
-        <input type="text" id="gen-nama"    class="inp-light" placeholder="Nama lengkap peserta...">
-        <input type="text" id="gen-jabatan" class="inp-light" placeholder="Jabatan / posisi...">
-      </div>
-      <button class="btn-gen" onclick="generateKode()">🔑 Generate Kode &amp; Kirim Email</button>
-      <div class="code-result" id="code-result">
-        <div class="cr-label">Kode Akses</div>
-        <div class="cr-name" id="cr-peserta">—</div>
-        <div class="cr-kode" id="cr-kode">——</div>
-        <div class="cr-btns">
-          <button class="btn-copy" onclick="copyKode()">📋 Copy Kode</button>
-          <button class="btn-wa"   onclick="kirimWA()">💬 Kirim WA</button>
-        </div>
-        <div class="cr-note">Berlaku 3 jam · Notif terkirim ke hrdgamemorial@gmail.com</div>
-      </div>
+
+  <div class="card">
+    <div class="clabel">Posisi yang Dilamar <span style="color:#FCA5A5">*</span></div>
+    <input type="text" id="intro-posisi" class="inp" placeholder="Contoh: Marketing Executive, HRD, dll.">
+    <div class="clabel">Tanggal Ketersediaan Bergabung</div>
+    <input type="text" id="intro-tanggal" class="inp" placeholder="dd/mm/yyyy" maxlength="10" oninput="autoDate(this)" style="margin-bottom:0;letter-spacing:1px;">
+    <div class="errmsg" id="intro-err"></div>
+  </div>
+
+  <button class="btn-gold" onclick="startForm()">Mulai Isi Formulir →</button>
+</div>
+
+<!-- ══════════ SCREEN 2: FORM ══════════ -->
+<div id="screen-form" class="screen">
+  <div class="form-header">
+    <div>
+      <div class="fhdr-title">📋 Formulir Lamaran — Lestari Memorial Park</div>
+      <div class="fhdr-sub" id="step-label">Bagian 1 dari 6</div>
     </div>
-    <div class="sec-title">Log Kode Akses</div>
-    <div class="log-wrap">
-      <table class="log-tbl">
-        <thead><tr><th>Nama</th><th>Jabatan</th><th>Kode</th><th>Status</th></tr></thead>
-        <tbody id="log-body">
-          <tr><td colspan="4" class="empty-log">Belum ada kode yang dibuat</td></tr>
-        </tbody>
+    <div class="step-wrap" id="step-dots"></div>
+  </div>
+  <div class="form-body" id="form-body"></div>
+  <div class="form-footer">
+    <button class="btn-nav prev" id="btn-prev" onclick="prevStep()">← Kembali</button>
+    <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="progress-label" id="prog-label">0%</div>
+    </div>
+    <button class="btn-nav" id="btn-next" onclick="nextStep()">Lanjut →</button>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN 3: RESULT ══════════ -->
+<div id="screen-result" class="screen sc">
+  <div class="res-badge">✅</div>
+  <div class="res-msg">Formulir Terkirim!</div>
+  <div class="res-sub">Terima kasih. Data lamaran Anda telah kami terima dan akan diproses oleh tim HR Lestari Memorial Park.</div>
+  <div class="res-detail">
+    <div class="rd-row"><span>Nama Pelamar</span><span id="rd-nama">—</span></div>
+    <div class="rd-row"><span>Posisi Dilamar</span><span id="rd-posisi">—</span></div>
+    <div class="rd-row"><span>Tanggal Kirim</span><span id="rd-tgl">—</span></div>
+    <div class="rd-row"><span>Status</span><span>✅ Terkirim</span></div>
+  </div>
+  <p style="font-size:13px;color:rgba(255,255,255,.35);max-width:380px;line-height:1.6;">
+    Kami akan menghubungi Anda melalui nomor HP atau email yang terdaftar jika profil Anda sesuai kebutuhan kami.
+  </p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════
+// CONFIG
+// ══════════════════════════════
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFDwflbyHZVX_D8I4k6tn_qT3DK3sN3MKmz0Qv-Qo6dpEyvfioNUDyki3zsMolpFEd/exec';
+const ACCESS_PASSWORD = 'LMP2025'; // ← ganti sesuai keinginan Anda
+
+let currentStep = 0;
+const TOTAL_STEPS = 6;
+let formData = {};
+let introData = {};
+
+const STEPS = [
+  'Informasi Pribadi',
+  'Latar Belakang Keluarga',
+  'Kualifikasi',
+  'Pengalaman Kerja',
+  'Pernyataan Kesehatan',
+  'Informasi Lainnya & Gaji'
+];
+
+// ── LOGIN ──
+function doLogin(){
+  const pw = document.getElementById('login-pw').value;
+  if(pw === ACCESS_PASSWORD){
+    document.getElementById('login-err').textContent='';
+    showScreen('screen-intro');
+  } else {
+    document.getElementById('login-err').textContent='Kode akses salah. Hubungi tim HR.';
+    document.getElementById('login-pw').value='';
+    document.getElementById('login-pw').focus();
+  }
+}
+function togglePw(){
+  const inp=document.getElementById('login-pw');
+  inp.type=inp.type==='password'?'text':'password';
+}
+
+// ── DATE AUTO-FORMAT dd/mm/yyyy ──
+function autoDate(el){
+  let v=el.value.replace(/\D/g,'');
+  if(v.length>2) v=v.slice(0,2)+'/'+v.slice(2);
+  if(v.length>5) v=v.slice(0,5)+'/'+v.slice(5);
+  el.value=v.slice(0,10);
+}
+
+// ── MONTH AUTO-FORMAT mm/yyyy ──
+function autoMonth(el){
+  let v=el.value.replace(/\D/g,'');
+  if(v.length>2) v=v.slice(0,2)+'/'+v.slice(2);
+  el.value=v.slice(0,7);
+}
+
+// ── UTILS ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── INTRO ──
+function startForm(){
+  const posisi = document.getElementById('intro-posisi').value.trim();
+  if(!posisi){ document.getElementById('intro-err').textContent='Posisi yang dilamar wajib diisi.'; return; }
+  document.getElementById('intro-err').textContent='';
+  introData.posisi = posisi;
+  introData.tanggal = document.getElementById('intro-tanggal').value || '—';
+  buildStepDots();
+  renderStep(0);
+  showScreen('screen-form');
+}
+
+// ── DOTS ──
+function buildStepDots(){
+  const wrap = document.getElementById('step-dots');
+  wrap.innerHTML='';
+  for(let i=0;i<TOTAL_STEPS;i++){
+    const d=document.createElement('div');
+    d.className='step-dot'; d.id='dot-'+i;
+    wrap.appendChild(d);
+  }
+}
+function updateDots(){
+  for(let i=0;i<TOTAL_STEPS;i++){
+    const d=document.getElementById('dot-'+i);
+    d.className='step-dot'+(i===currentStep?' active':i<currentStep?' done':'');
+  }
+}
+
+// ── RENDER ──
+function renderStep(n){
+  currentStep=n;
+  updateDots();
+  document.getElementById('step-label').textContent=`Bagian ${n+1} dari ${TOTAL_STEPS} — ${STEPS[n]}`;
+  const pct=Math.round((n/TOTAL_STEPS)*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-label').textContent=pct+'%';
+  document.getElementById('btn-prev').style.visibility=n===0?'hidden':'visible';
+  document.getElementById('btn-next').textContent=n===TOTAL_STEPS-1?'Kirim Formulir ✓':'Lanjut →';
+
+  const body=document.getElementById('form-body');
+  const renderers=[stepInfoPribadi,stepKeluarga,stepKualifikasi,stepPengalaman,stepKesehatan,stepLainnya];
+  body.innerHTML=renderers[n]();
+  restoreStep(n);
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════
+// STEP TEMPLATES
+// ══════════════════════════════
+
+function field(label, id, type='text', placeholder='', required=false, extra=''){
+  return `<div class="field-wrap">
+    <div class="field-label">${label}${required?'<span class="req"> *</span>':''}</div>
+    <input class="inp-l" id="${id}" type="${type}" placeholder="${placeholder}" ${extra}>
+  </div>`;
+}
+function select(label, id, options, required=false){
+  const opts = options.map(o=>`<option>${o}</option>`).join('');
+  return `<div class="field-wrap">
+    <div class="field-label">${label}${required?'<span class="req"> *</span>':''}</div>
+    <select class="inp-l" id="${id}"><option value="">— Pilih —</option>${opts}</select>
+  </div>`;
+}
+
+// ── STEP 1: INFO PRIBADI ──
+function stepInfoPribadi(){
+  return `
+  <div class="sec-card">
+    <div class="sec-title">A. Informasi Pelamar</div>
+    <div class="field-group col2">
+      ${field('Nama Lengkap','f_nama','text','Nama sesuai KTP',true)}
+      ${field('Nama Panggilan','f_panggilan','text','Nama panggilan')}
+    </div>
+    <div class="field-group">
+      ${field('Alamat Tetap (sesuai KTP)','f_alamat_ktp','text','Jalan, RT/RW, Kelurahan, Kecamatan, Kota, Provinsi',true)}
+    </div>
+    <div class="field-group">
+      ${field('Alamat Saat Ini (jika berbeda)','f_alamat_skrg','text','Kosongkan jika sama dengan KTP')}
+    </div>
+    <div class="field-group col2">
+      ${field('No. HP / Telepon','f_hp','tel','08xxxxxxxxxx',true)}
+      ${field('Email','f_email','email','email@domain.com')}
+    </div>
+    <div class="field-group col3">
+      ${field('No. KTP','f_ktp','text','16 digit NIK',true)}
+      ${field('Tempat Lahir','f_tempat_lahir','text','Kota')}
+      ${field('Tanggal Lahir','f_tgl_lahir','text','dd/mm/yyyy',true,'maxlength="10" oninput="autoDate(this)" style="letter-spacing:1px"')}
+    </div>
+    <div class="field-group col3">
+      ${select('Jenis Kelamin','f_jk',['Pria','Wanita'])}
+      ${field('Kebangsaan','f_kebangsaan','text','','',`value="Indonesia"`)}
+      ${select('Agama','f_agama',['Islam','Kristen Protestan','Katolik','Hindu','Buddha','Konghucu','Lainnya'])}
+    </div>
+    <div class="field-group col3">
+      ${select('Status Perkawinan','f_status_kawin',['Belum Kawin','Kawin','Janda / Duda'])}
+      ${field('No. NPWP','f_npwp','text','Opsional')}
+      ${field('No. Jamsostek / BPJS','f_jamsostek','text','Opsional')}
+    </div>
+    <div class="field-group col2">
+      ${select('Status Tempat Tinggal','f_status_tinggal',['Milik Sendiri','Kontrak / Sewa','Bersama Orang Tua','Kos','Lainnya'])}
+      ${field('No. Kendaraan & Tipe','f_kendaraan','text','Contoh: B1234XY — Honda Beat')}
+    </div>
+  </div>`;
+}
+
+// ── STEP 2: KELUARGA ──
+function stepKeluarga(){
+  const sdrRows = [1,2,3,4,5].map(i=>`
+    <div class="field-group" style="grid-template-columns:1.5fr 0.5fr 1fr 0.5fr 1.5fr;margin-bottom:8px;">
+      ${field(`Saudara ${i} — Nama`,`f_sdr${i}_nama`,'text','Nama')}
+      ${select('L/P',`f_sdr${i}_jk`,['L','P'])}
+      ${field('Pendidikan',`f_sdr${i}_pend`,'text','SD/SMA/S1')}
+      ${field('Usia',`f_sdr${i}_usia`,'number','Thn')}
+      ${field('Pekerjaan',`f_sdr${i}_pekerjaan`,'text','Pekerjaan')}
+    </div>`).join('');
+
+  return `
+  <div class="sec-card">
+    <div class="sec-title">B1. Orang Tua</div>
+    <div class="field-group col2">
+      ${field('Nama Ayah','f_ayah_nama','text','Nama lengkap')}
+      ${field('Pekerjaan Ayah','f_ayah_pekerjaan','text','Pekerjaan / Almarhum')}
+      ${field('Nama Ibu','f_ibu_nama','text','Nama lengkap')}
+      ${field('Pekerjaan Ibu','f_ibu_pekerjaan','text','Pekerjaan / Almarhumah')}
+    </div>
+  </div>
+  <div class="sec-card">
+    <div class="sec-title">B2. Saudara Kandung</div>
+    ${sdrRows}
+  </div>
+  <div class="sec-card">
+    <div class="sec-title">B3. Pasangan</div>
+    <div class="field-group col2">
+      ${field('Nama Pasangan','f_pasangan_nama','text','Opsional jika belum menikah')}
+      ${field('Usia','f_pasangan_usia','number','Thn')}
+      ${field('Pekerjaan','f_pasangan_pekerjaan','text','Pekerjaan')}
+      ${field('Nama Perusahaan','f_pasangan_perusahaan','text','Perusahaan')}
+      ${field('Pendidikan Terakhir','f_pasangan_pend','text','SD/SMA/D3/S1/S2')}
+    </div>
+  </div>
+  <div class="sec-card">
+    <div class="sec-title">B4. Anak</div>
+    ${[1,2,3].map(i=>`
+    <div class="field-group col3" style="margin-bottom:10px;">
+      ${field(`Anak ${i} — Nama`,`f_anak${i}_nama`,'text','Nama')}
+      ${select('L/P',`f_anak${i}_jk`,['L','P'])}
+      ${field('Tanggal Lahir',`f_anak${i}_lahir`,'text','dd/mm/yyyy','','maxlength="10" oninput="autoDate(this)" style="letter-spacing:1px"')}
+    </div>`).join('')}
+  </div>`;
+}
+
+// ── STEP 3: KUALIFIKASI ──
+function stepKualifikasi(){
+  const pendLevels=[{id:'sd',l:'SD'},{id:'smp',l:'SMP'},{id:'sma',l:'SMA / SMK'},{id:'univ',l:'Akademi / Universitas'}];
+  const pendRows=pendLevels.map(({id,l})=>`
+    <div class="field-group" style="grid-template-columns:1.5fr 1fr 1fr 0.7fr 0.7fr 0.8fr;margin-bottom:10px;">
+      ${field(l,`f_${id}_nama`,'text','Nama Sekolah')}
+      ${field('Kota',`f_${id}_kota`,'text','Kota')}
+      ${field('Jurusan',`f_${id}_jurusan`,'text','—')}
+      ${field('Dari',`f_${id}_dari`,'number','Thn')}
+      ${field('Sampai',`f_${id}_sampai`,'number','Thn')}
+      ${select('Lulus?',`f_${id}_lulus`,['Lulus','Tidak Lulus'])}
+    </div>`).join('');
+
+  return `
+  <div class="sec-card">
+    <div class="sec-title">C1. Pendidikan Formal</div>
+    ${pendRows}
+  </div>
+  <div class="sec-card">
+    <div class="sec-title">C2. Kursus / Training / Seminar</div>
+    ${[1,2,3].map(i=>`
+    <div class="field-group" style="grid-template-columns:1.5fr 1.5fr 0.7fr 1fr;margin-bottom:10px;">
+      ${field(`Bidang / Jenis #${i}`,`f_kursus${i}_jenis`,'text','Contoh: Digital Marketing')}
+      ${field('Penyelenggara',`f_kursus${i}_penyelenggara`,'text','Lembaga')}
+      ${field('Tahun',`f_kursus${i}_tahun`,'number','Thn')}
+      ${field('Dibiayai oleh',`f_kursus${i}_biaya`,'text','Sendiri / Perusahaan')}
+    </div>`).join('')}
+  </div>
+  <div class="sec-card">
+    <div class="sec-title">C3. Kemampuan Komputer</div>
+    <div class="field-group col3">
+      ${select('Microsoft Word','f_komp_word',['Baik Sekali','Baik','Cukup','Kurang'])}
+      ${select('Microsoft Excel','f_komp_excel',['Baik Sekali','Baik','Cukup','Kurang'])}
+      ${select('PowerPoint','f_komp_ppt',['Baik Sekali','Baik','Cukup','Kurang'])}
+    </div>
+    <div class="field-group">
+      ${field('Software / Aplikasi Lain','f_komp_lain','text','Contoh: Canva, MYOB, AutoCAD, dll.')}
+    </div>
+  </div>
+  <div class="sec-card">
+    <div class="sec-title">C4. Kemampuan Bahasa</div>
+    ${[{id:'indo',nm:'Indonesia'},{id:'eng',nm:'Inggris'},{id:'lain',nm:''}].map(b=>`
+    <div class="field-group" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr;margin-bottom:10px;">
+      ${field('Bahasa',`f_bhs_${b.id}_nama`,'text',b.nm||'Nama bahasa','',b.nm?`value="${b.nm}"`:`placeholder="Nama bahasa"`)}
+      ${select('Mendengar',`f_bhs_${b.id}_dengar`,['Baik Sekali','Baik','Cukup','Kurang'])}
+      ${select('Membaca',`f_bhs_${b.id}_baca`,['Baik Sekali','Baik','Cukup','Kurang'])}
+      ${select('Berbicara',`f_bhs_${b.id}_bicara`,['Baik Sekali','Baik','Cukup','Kurang'])}
+      ${select('Menulis',`f_bhs_${b.id}_tulis`,['Baik Sekali','Baik','Cukup','Kurang'])}
+    </div>`).join('')}
+  </div>
+  <div class="sec-card">
+    <div class="sec-title">C5. Organisasi & Hobi</div>
+    <div class="field-group col2">
+      ${field('Organisasi yang pernah diikuti','f_organisasi','text','Nama org, jabatan, tahun')}
+      ${field('Hobi / Kegiatan Waktu Luang','f_hobi','text','Olahraga, membaca, dll.')}
+    </div>
+  </div>`;
+}
+
+// ── STEP 4: PENGALAMAN KERJA ──
+function stepPengalaman(){
+  const expCards=[1,2,3,4].map(i=>`
+  <div class="sec-card">
+    <div class="sec-title">Pengalaman #${i}</div>
+    <div class="field-group col2">
+      ${field('Nama Perusahaan',`f_exp${i}_perusahaan`,'text','PT. / CV. ...')}
+      ${field('Jenis Usaha',`f_exp${i}_jenis`,'text','Jasa / Ritel / Manufaktur')}
+      ${field('Jabatan Awal',`f_exp${i}_jabatan_awal`,'text','Staff / Supervisor ...')}
+      ${field('Jabatan Akhir',`f_exp${i}_jabatan_akhir`,'text','Staff / Manager ...')}
+      ${field('Mulai Bekerja',`f_exp${i}_mulai`,'text','mm/yyyy','','maxlength="7" oninput="autoMonth(this)" style="letter-spacing:1px"')}
+      ${field('Sampai',`f_exp${i}_sampai`,'text','mm/yyyy (kosongkan jika masih)','','maxlength="7" oninput="autoMonth(this)" style="letter-spacing:1px"')}
+      ${field('Jml. Karyawan',`f_exp${i}_jml_karyawan`,'number','Angka')}
+      ${select('Status Karyawan',`f_exp${i}_status`,['Kontrak','Tetap','Magang','Paruh Waktu'])}
+    </div>
+    <div class="field-group">
+      ${field('Gaji + Tunjangan & Fasilitas',`f_exp${i}_gaji`,'text','Rp ... + BPJS + Uang Makan ...')}
+      ${field('Alasan Berhenti / Mengundurkan Diri',`f_exp${i}_alasan`,'text','Opsional')}
+    </div>
+  </div>`).join('');
+
+  return expCards + `
+  <div class="sec-card">
+    <div class="sec-title">Uraian Tugas Pekerjaan Terakhir</div>
+    <div class="field-wrap">
+      <div class="field-label">Deskripsikan tugas & tanggung jawab utama Anda</div>
+      <textarea class="inp-l" id="f_job_desc" rows="5" placeholder="Uraikan secara singkat..." style="resize:vertical;"></textarea>
+    </div>
+  </div>
+  <div class="sec-card">
+    <div class="sec-title">Referensi (Mantan Atasan)</div>
+    ${[1,2].map(r=>`
+    <div class="field-group col2" style="margin-bottom:12px;">
+      ${field(`Nama Referensi #${r}`,`f_ref${r}_nama`,'text','Nama lengkap')}
+      ${field('Jabatan & Perusahaan',`f_ref${r}_jabatan`,'text','Jabatan, PT. ...')}
+      ${field('No. Telepon',`f_ref${r}_telp`,'tel','08xxxxxxxxxx')}
+      ${field('Hubungan',`f_ref${r}_hubungan`,'text','Atasan langsung / Rekan')}
+    </div>`).join('')}
+  </div>`;
+}
+
+// ── STEP 5: KESEHATAN ──
+function stepKesehatan(){
+  const kQ=[
+    {id:'k1',text:'Apakah Anda memiliki kondisi medis atau cacat yang dapat mempengaruhi kemampuan Anda melaksanakan pekerjaan yang dilamar?'},
+    {id:'k2',text:'Pernahkah Anda berhenti bekerja karena alasan kesehatan?'},
+    {id:'k3',text:'Pernahkah Anda gagal dalam pemeriksaan medis atau memiliki pembatasan medis untuk ikut serta dalam asuransi kesehatan?'},
+    {id:'k4',text:'Apakah saat ini Anda sedang menunggu kunjungan ke rumah sakit untuk perawatan atau operasi?'},
+    {id:'k5',text:'Apakah saat ini Anda dalam pengawasan medis?'},
+    {id:'k6',text:'Apakah saat ini Anda sedang meminum obat secara teratur?'},
+    {id:'k7',text:'Apakah Anda memiliki alergi terhadap makanan atau obat tertentu?'},
+    {id:'k8',text:'Dalam 12 bulan terakhir, apakah Anda pernah absen karena sakit atau cedera selama 2 minggu atau lebih?'},
+    {id:'k9',text:'Untuk wanita: Apakah Anda sedang hamil? (Opsional)'},
+  ];
+  const rows=kQ.map(q=>`
+    <tr>
+      <td>${q.text}</td>
+      <td><div class="yn-radio"><input type="radio" name="${q.id}" id="${q.id}_ya" value="Ya"><label for="${q.id}_ya">✓</label></div></td>
+      <td><div class="yn-radio"><input type="radio" name="${q.id}" id="${q.id}_tidak" value="Tidak"><label for="${q.id}_tidak">✓</label></div></td>
+      <td><input class="inp-l" id="${q.id}_ket" placeholder="Keterangan (jika Ya)" style="font-size:12px;padding:8px 10px;"></td>
+    </tr>`).join('');
+
+  return `
+  <div class="sec-card">
+    <div class="sec-title">E. Informasi Fisik</div>
+    <div class="field-group col3">
+      ${select('Golongan Darah','f_gol_darah',['A','B','AB','O'])}
+      ${field('Berat Badan (kg)','f_berat','number','kg')}
+      ${field('Tinggi Badan (cm)','f_tinggi','number','cm')}
+    </div>
+  </div>
+  <div class="sec-card">
+    <div class="sec-title">E. Pernyataan Kesehatan</div>
+    <p style="font-size:13px;color:var(--mid);margin-bottom:14px;line-height:1.6;">Pengungkapan adanya penyakit / cacat tidak akan secara otomatis mendiskualifikasi Anda. Tujuan pernyataan ini adalah memastikan penempatan yang tepat.</p>
+    <div style="overflow-x:auto;">
+      <table class="yn-table">
+        <thead><tr><th>Pertanyaan</th><th class="center">Ya</th><th class="center">Tidak</th><th>Keterangan</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ── STEP 6: LAINNYA ──
+function stepLainnya(){
+  const lQ=[
+    {id:'l1',text:'Pernahkah Anda dihukum karena tindak kejahatan?'},
+    {id:'l2',text:'Apakah Anda pernah mengalami kebangkrutan?'},
+    {id:'l3',text:'Apakah Anda mempunyai pekerjaan sampingan / part-time?'},
+    {id:'l4',text:'Apakah Anda pernah menjalani pemeriksaan psikologis / psikotest?'},
+    {id:'l5',text:'Bila diterima, bersediakah Anda ditempatkan di luar kota?'},
+  ];
+  const rows=lQ.map(q=>`
+    <tr>
+      <td>${q.text}</td>
+      <td><div class="yn-radio"><input type="radio" name="${q.id}" id="${q.id}_ya" value="Ya"><label for="${q.id}_ya">✓</label></div></td>
+      <td><div class="yn-radio"><input type="radio" name="${q.id}" id="${q.id}_tidak" value="Tidak"><label for="${q.id}_tidak">✓</label></div></td>
+      <td><input class="inp-l" id="${q.id}_ket" placeholder="Keterangan" style="font-size:12px;padding:8px 10px;"></td>
+    </tr>`).join('');
+
+  return `
+  <div class="sec-card">
+    <div class="sec-title">F. Informasi Lainnya</div>
+    <div style="overflow-x:auto;">
+      <table class="yn-table">
+        <thead><tr><th>Pertanyaan</th><th class="center">Ya</th><th class="center">Tidak</th><th>Keterangan</th></tr></thead>
+        <tbody>${rows}</tbody>
       </table>
     </div>
   </div>
-</div>
-
-<!-- 3: PESERTA MASUKKAN KODE -->
-<div id="screen-kode" class="screen sc">
-  <div class="badge">● PT. KPUS Assessment System</div>
-  <div class="ttl">Masukkan<span class="ac">Kode Akses</span></div>
-  <div class="sub">Masukkan data Anda dan kode akses yang diberikan administrator.</div>
-  <div class="card">
-    <div class="clabel">Data Peserta</div>
-    <input type="text" id="p-nama"    class="inp" placeholder="Nama lengkap Anda...">
-    <input type="text" id="p-jabatan" class="inp" placeholder="Jabatan / posisi...">
-    <div class="clabel" style="margin-top:14px;">Kode Akses (6 Karakter)</div>
-    <input type="text" id="p-kode" class="inp"
-      placeholder="Contoh: AB12CD" maxlength="6"
-      style="text-transform:uppercase;letter-spacing:4px;font-size:20px;font-family:'Syne',sans-serif;font-weight:700;text-align:center;"
-      oninput="this.value=this.value.toUpperCase()"
-      onkeydown="if(event.key==='Enter')pesertaMasuk()">
-    <div class="errmsg" id="kode-err"></div>
+  <div class="sec-card">
+    <div class="sec-title">Teman / Saudara di Perusahaan</div>
+    <p style="font-size:13px;color:var(--mid);margin-bottom:14px;">Apakah Anda mempunyai teman / sanak saudara yang bekerja di perusahaan ini?</p>
+    ${[1,2].map(r=>`
+    <div class="field-group col3" style="margin-bottom:10px;">
+      ${field(`Nama #${r}`,`f_teman${r}_nama`,'text','Nama')}
+      ${field('Hubungan',`f_teman${r}_hub`,'text','Saudara / Teman')}
+      ${field('Jabatan & Lokasi',`f_teman${r}_jabatan`,'text','Jabatan, Cabang/Divisi')}
+    </div>`).join('')}
   </div>
-  <button class="btn-gold" onclick="pesertaMasuk()">Lanjut →</button>
-  <button class="btn-ghost" onclick="showScreen('screen-admin-login')">← Admin</button>
-</div>
-
-<!-- 4: INTRO -->
-<div id="screen-intro" class="screen sc">
-  <div class="badge">● PT. KPUS Assessment System</div>
-  <div class="sub">Tes kemampuan memecahkan masalah. Kerjakan semampu Anda — jangan terlalu lama di satu soal.</div>
-  <div class="stats-row">
-    <div class="stat-pill"><div class="stat-num">50</div><div class="stat-lbl">Soal</div></div>
-    <div class="stat-pill"><div class="stat-num">12'</div><div class="stat-lbl">Waktu</div></div>
-    <div class="stat-pill"><div class="stat-num">5</div><div class="stat-lbl">Tipe</div></div>
+  <div class="sec-card">
+    <div class="sec-title">G. Gaji & Tunjangan yang Diharapkan</div>
+    <div class="field-group col2">
+      ${field('Gaji Pokok yang Diharapkan','f_gaji_harap','text','Contoh: Rp 5.000.000',true)}
+      ${field('Tunjangan / Fasilitas yang Diharapkan','f_tunjangan_harap','text','BPJS, Uang Makan, Transport, dll.')}
+    </div>
   </div>
-  <div class="card" style="text-align:left;max-width:460px;">
-    <div class="clabel">Petunjuk</div>
-    <p style="font-size:14px;color:rgba(255,255,255,.6);line-height:1.7;">
-      • Soal bertahap dari mudah ke sulit<br>
-      • Tidak harus menjawab semua soal<br>
-      • Waktu <strong style="color:var(--gold)">12 menit</strong> — tidak bisa dijeda setelah mulai<br>
-      • Tanpa kalkulator atau alat bantu hitung
+  <div class="sec-card" style="background:var(--goldl);border-color:rgba(212,168,67,.4);">
+    <p style="font-size:13px;color:var(--dark);line-height:1.8;margin-bottom:14px;">
+      <strong>Pernyataan:</strong> Dengan ini saya menyatakan bahwa keterangan yang saya berikan di atas adalah benar adanya. Bilamana ternyata terdapat ketidakbenaran, saya bertanggung jawab penuh atas akibatnya yaitu pemutusan hubungan kerja.
     </p>
-    <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);">
-      <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Peserta</div>
-      <div id="intro-nama" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--white);"></div>
-      <div id="intro-jabatan" style="font-size:13px;color:rgba(255,255,255,.4);margin-top:2px;"></div>
-    </div>
-  </div>
-  <button class="btn-gold" onclick="startQuiz()">Mulai Tes Sekarang →</button>
-</div>
-
-<!-- 5: QUIZ -->
-<div id="screen-quiz" class="screen">
-  <div class="qhdr">
-    <div><div class="qhdr-sub" id="hdr-name"></div></div>
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div>
-        <div class="pbwrap"><div class="pbfill" id="pb-fill" style="width:0%"></div></div>
-        <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:3px;text-align:right;" id="pb-txt">0/50</div>
-      </div>
-      <div class="timer-block">
-        <div class="timer-lbl">Sisa Waktu</div>
-        <div class="timer-val" id="timer-val">12:00</div>
-      </div>
-    </div>
-  </div>
-  <div class="qbody">
-    <div class="qmeta">
-      <span class="qcounter" id="q-counter">Soal 1 dari 50</span>
-      <span class="qtag" id="q-tag">SOAL #1</span>
-      <span class="qlvl" id="q-lvl">Mudah</span>
-      <span class="qcat" id="q-cat">Kosakata</span>
-    </div>
-    <div class="qtxt" id="q-txt"></div>
-    <div class="choices" id="choices" style="display:none;"></div>
-    <div class="txt-ans-wrap" id="txt-wrap" style="display:none;">
-      <input type="text" id="txt-inp" class="txt-ans-inp" placeholder="Jawaban..."
-        autocomplete="off" onkeydown="if(event.key==='Enter')cekTeks()">
-      <button class="btn-cek" id="btn-cek" onclick="cekTeks()">Cek ✓</button>
-    </div>
-    <div class="fbbox" id="fbbox"></div>
-    <button class="btn-next" id="btn-next" onclick="nextQ()">Lanjut →</button>
-  </div>
-</div>
-
-<!-- 6: RESULT — peserta hanya lihat ini -->
-<div id="screen-result" class="screen sc">
-  <div class="res-done-icon">✅</div>
-  <div class="res-done-title">Tes Selesai</div>
-  <div class="res-done-sub">
-    Terima kasih, <span id="res-nama" style="color:var(--gold);font-weight:700;"></span>.<br>
-    Jawaban Anda sudah diterima dan sedang diproses oleh tim HRD.<br>
-    Anda dapat menutup halaman ini.
-  </div>
-  <div class="send-status">
-    <div class="send-status-title">📤 Pengiriman Laporan</div>
-    <div class="send-row">
-      <span class="send-icon spin" id="icon-email">⏳</span>
-      <span id="text-email">Mengirim laporan ke HRD...</span>
-    </div>
-    <div class="send-row">
-      <span class="send-icon spin" id="icon-discord">⏳</span>
-      <span id="text-discord">Mengirim notifikasi...</span>
-    </div>
-    <div class="send-row">
-      <span class="send-icon spin" id="icon-sheet">⏳</span>
-      <span id="text-sheet">Menyimpan data...</span>
-    </div>
-  </div>
-</div>
-
-<script>
-// ══════════════════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════════════════
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMAVqOfO9B3IxGjkg-kFelrK2DFuRcMNm08RcgS8xcCXMsq4rtT3ZbnHI930zIzqRh/exec';
-const ADMIN_PASSWORD  = 'AMG2025wpt';
-const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1493451394198536192/pQjW2Ajd61hKx3vyehKzeEmRll6YOwd5jSNPJ4SubQrh_yCpDXVoRP2JgOixtvmloxP3';
-
-// ══════════════════════════════════════════════════════
-// BANK SOAL
-// ══════════════════════════════════════════════════════
-const BANK=[
-{id:1,lv:1,type:'MC',cat:'Pengetahuan Umum',q:'Dua bulan yang lalu, sebelum pertengahan tahun, adalah bulan...',c:['Maret','April','Mei','Juni','Juli'],a:1,exp:'Pertengahan tahun = Juli. Dua bulan sebelum Juli = Mei.'},
-{id:2,lv:1,type:'MC',cat:'Antonim',q:'MENANGKAP adalah lawan kata dari',c:['meletakkan','membebaskan','berisiko','berusaha','turun tingkat'],a:1,exp:'Lawan MENANGKAP = MEMBEBASKAN.'},
-{id:3,lv:1,type:'MC',cat:'Klasifikasi',q:'Sebagian besar kata berikut satu kelompok. Manakah yang BERBEDA?',c:['Januari','Agustus','Rabu','Oktober','Desember'],a:2,exp:'"Rabu" adalah nama hari, yang lain nama bulan.'},
-{id:4,lv:1,type:'MC',cat:'Pengetahuan Umum',q:'RSVP dalam undangan berarti:',c:['Hadir tanpa konfirmasi','Mohon konfirmasi kehadiran Anda','Undangan tidak resmi','Tamu bebas datang','Jawab jika tidak hadir'],a:1,exp:'RSVP = Mohon konfirmasi kehadiran.'},
-{id:5,lv:1,type:'MC',cat:'Klasifikasi',q:'Manakah kata yang BERBEDA dari kelompok berikut?',c:['pasukan','liga','berpartisipasi','regu','kelompok'],a:2,exp:'"Berpartisipasi" kata kerja, yang lain kata benda.'},
-{id:6,lv:1,type:'MC',cat:'Antonim',q:'BIASA adalah lawan kata dari',c:['jarang','terbiasa','tetap','berhenti','selalu'],a:0,exp:'Lawan BIASA = JARANG.'},
-{id:7,lv:1,type:'MC',cat:'Persamaan Kata',q:'"KLIEN" dan "PELANGGAN" — apakah dua kata ini:',c:['Memiliki arti yang sama','Memiliki arti berlawanan','Tidak memiliki arti sama atau berlawanan'],a:0,exp:'Klien dan Pelanggan bermakna sama.'},
-{id:8,lv:1,type:'MC',cat:'Pola Angka',q:'Angka berapa yang selanjutnya dalam urutan ini?\n16  8  4  2  1  1/2  ...',c:['1/4','1/8','0','1/3','1/5'],a:0,exp:'Setiap angka dibagi 2: 1/2 dibagi 2 = 1/4.'},
-{id:9,lv:1,type:'MC',cat:'Antonim',q:'JAUH adalah lawan kata dari',c:['terpencil','dekat','jarang','terburu-buru','pasti'],a:1,exp:'Lawan JAUH = DEKAT.'},
-{id:10,lv:1,type:'MC',cat:'Silogisme',q:'Anggap dua pernyataan pertama benar. Apakah pernyataan terakhir?\n\n"Anak-anak ini adalah anak normal. Semua anak normal sifatnya aktif. Anak-anak ini aktif."',c:['Benar','Salah','Tidak Tahu'],a:0,exp:'BENAR.'},
-{id:11,lv:1,type:'MC',cat:'Antonim',q:'MUSIM GUGUR adalah lawan dari',c:['liburan','musim panas','musim semi','musim dingin','akhir tahun'],a:2,exp:'Gugur lawannya Musim Semi.'},
-{id:12,lv:1,type:'TEXT',cat:'Aritmatika',q:'Sebuah pesawat terbang 400 kaki dalam 1/2 detik.\nPada kecepatan sama, berapa kaki dalam 10 detik?',a:'8000',alt:['8.000','8,000'],exp:'400 per 1/2 detik = 800/detik. x10 = 8.000 kaki.'},
-{id:13,lv:1,type:'MC',cat:'Silogisme',q:'Anggap dua pernyataan pertama benar. Apakah pernyataan terakhir?\n\n"John seusia Sally. Sally lebih muda dari Budi. John lebih muda dari Budi."',c:['Benar','Salah','Tidak Tahu'],a:0,exp:'BENAR.'},
-{id:14,lv:1,type:'TEXT',cat:'Aritmatika',q:'4 permen seharga Rp 12. Berapa harga 1/2 lusin (6 buah)?',a:'18',alt:['Rp18','Rp 18','18 rupiah'],exp:'Rp3/buah x6 = Rp18.'},
-{id:15,lv:2,type:'TEXT',cat:'Duplikasi',q:'Berapa pasangan angka yang IDENTIK?\n\n73841 — 73841\n8105492 — 8105492\n19302012 — 19302021\n85901190 — 85901190\n77775555 — 77775555',a:'4',alt:['empat'],exp:'Pasangan 1,2,4,5 identik. Total = 4.'},
-{id:16,lv:2,type:'MC',cat:'Susunan Kalimat',q:'Susun menjadi kalimat benar. Huruf TERAKHIR dari kata TERAKHIR adalah jawaban:\n\n"memiliki kalimat suatu kerja kata selalu sebuah"',c:['A','U','I','N','K'],a:0,exp:'Kata terakhir: "kerja" huruf terakhir: A.'},
-{id:17,lv:2,type:'TEXT',cat:'Aritmatika',q:'Anak lelaki berumur 6 tahun, saudara perempuannya 2x lebih tua.\nKetika anak lelaki berumur 9, berapa umur saudaranya?',a:'15',alt:['15 tahun'],exp:'Saudara=12. Selisih=6. 9+6=15 tahun.'},
-{id:18,lv:2,type:'MC',cat:'Persamaan Kata',q:'"ITS" dan "IT\'S" — apakah dua kata ini:',c:['Memiliki arti yang sama','Memiliki arti berlawanan','Tidak memiliki arti sama atau berlawanan'],a:2,exp:'"It\'s" = it is. "Its" = miliknya. Berbeda.'},
-{id:19,lv:2,type:'MC',cat:'Silogisme',q:'Anggap dua pernyataan pertama benar. Apakah pernyataan terakhir?\n\n"Semua siswa ikut ujian. Beberapa orang di ruangan ini adalah siswa. Beberapa orang di ruangan ini ikut ujian."',c:['Benar','Salah','Tidak Tahu'],a:0,exp:'BENAR.'},
-{id:20,lv:2,type:'TEXT',cat:'Aritmatika',q:'Pedagang beli beberapa barrel total Rp 5.000. Jual Rp 6.000, untung Rp 50/barrel. Berapa barrel?',a:'20',alt:['20 barrel','dua puluh'],exp:'1000/50 = 20 barrel.'},
-{id:21,lv:2,type:'MC',cat:'Susunan Kalimat',q:'Susun menjadi kalimat. Jika BENAR tulis B, jika SALAH tulis S:\n\n"semua menghasilkan telur ayam"',c:['B — Benar','S — Salah'],a:1,exp:'Ayam jantan tidak bertelur. Jawaban: S.'},
-{id:22,lv:2,type:'MC',cat:'Peribahasa',q:'Dua peribahasa berikut memiliki makna SERUPA. Manakah?',c:['Anak seperti ayahnya / Mereka dari sumber yang sama','Semakin banyak sapi / Bila tertinggal sejauh satu mil','Seorang dikenal dari pergaulannya / Mereka dari sumber yang sama','Anak seperti ayahnya / Bila tertinggal sejauh satu mil','Batu berguling / Ini ketidakmungkinan'],a:0,exp:'"Anak seperti ayahnya" dan "Mereka dari sumber yang sama" serupa.'},
-{id:23,lv:2,type:'TEXT',cat:'Aritmatika',q:'Sebuah jam terlambat 1 menit 30 detik dalam 45 hari.\nBerapa detik terlambat dalam sehari?',a:'2',alt:['2 detik','dua'],exp:'90 detik / 45 = 2 detik/hari.'},
-{id:24,lv:2,type:'MC',cat:'Persamaan Kata',q:'"CANVAS" dan "CANVASS" — apakah dua kata ini:',c:['Memiliki arti yang sama','Memiliki arti berlawanan','Tidak memiliki arti sama atau berlawanan'],a:2,exp:'Berbeda, tidak berlawanan.'},
-{id:25,lv:2,type:'TEXT',cat:'Aritmatika',q:'Dalam 28 hari seseorang menabung Rp 700.\nBerapa rata-rata tabungan per hari?',a:'25',alt:['Rp25','25 rupiah','Rp 25'],exp:'700/28 = 25 rupiah/hari.'},
-{id:26,lv:2,type:'MC',cat:'Persamaan Kata',q:'"DAPAT DIPERCAYA" dan "MUDAH PERCAYA" — apakah dua frasa ini:',c:['Memiliki arti yang sama','Memiliki arti berlawanan','Tidak memiliki arti sama atau berlawanan'],a:2,exp:'Berbeda makna, tidak berlawanan.'},
-{id:27,lv:2,type:'TEXT',cat:'Aritmatika',q:'Dua orang menangkap 42 ikan. X menangkap 6x lebih banyak dari Y. Berapa ikan Y?',a:'6',alt:['6 ekor','enam'],exp:'7Y=42. Y=6.'},
-{id:28,lv:2,type:'TEXT',cat:'Aritmatika',q:'Kotak persegi panjang memuat 900 kubik kaki. Lebar 9 kaki, panjang 10 kaki. Berapa kedalaman?',a:'10',alt:['10 kaki'],exp:'900=10x9xt. t=10 kaki.'},
-{id:29,lv:2,type:'MC',cat:'Pola Angka',q:'Satu angka dalam rangkaian ini TIDAK sesuai pola. Mana?\n\n1/2  1/4  1/6  1/8  1/9  1/12',c:['1/2','1/4','1/6','1/9','1/12'],a:3,exp:'Pola penyebut genap. 1/9 tidak cocok.'},
-{id:30,lv:2,type:'MC',cat:'Pengetahuan Umum',q:'Apakah "p.m." singkatan dari "post meridiem"?',c:['Ya, benar','Tidak, salah'],a:0,exp:'"p.m." = post meridiem = setelah tengah hari.'},
-{id:31,lv:2,type:'TEXT',cat:'Aritmatika',q:'Sebuah rok butuh 2,5 meter kain. Berapa rok dari 45 meter kain?',a:'18',alt:['18 potong','delapan belas'],exp:'45/2.5 = 18 rok.'},
-{id:32,lv:2,type:'TEXT',cat:'Aritmatika',q:'Tim kalah 9 pertandingan musim ini = 3/8 dari semua pertandingan.\nBerapa total pertandingan?',a:'24',alt:['24 pertandingan'],exp:'9 = 3/8 x total. Total = 24.'},
-{id:33,lv:2,type:'MC',cat:'Pola Angka',q:'Angka selanjutnya dari seri ini?\n\n1  0.5  0.25  0.125  ...',c:['0.0625','0.05','0.1','0.025','0.5'],a:0,exp:'0.125/2 = 0.0625.'},
-{id:34,lv:3,type:'MC',cat:'Peribahasa',q:'Dua peribahasa berikut memiliki makna SERUPA. Manakah?',c:['Tidak bisa buat dompet sutra dari telinga babi / Tidak bisa hancurkan kapal yang sudah rusak','Orang yang curi telur akan curi sapi / Batu berguling tidak kumpulkan lumut','Tidak bisa hancurkan kapal rusak / Ini ketidakmungkinan yang terjadi','Anak seperti ayahnya / Orang dikenal dari pergaulannya','Batu berguling / Ketidakmungkinan'],a:2,exp:'Sesuatu buruk tidak bisa diperburuk lagi.'},
-{id:35,lv:3,type:'TEXT',cat:'Duplikasi',q:'Berapa pasangan nama yang IDENTIK?\n\nRexford, J.D. — Rockford, J.D.\nSingleton, M.O. — Simbleten, M.O.\nRichards, W.E. — Richad, W.E.\nSiegel, A.B. — Seigel, A.B.\nWood, A.O. — Wood, A.O.',a:'1',alt:['satu','1 pasang'],exp:'Hanya Wood, A.O. yang identik.'},
-{id:36,lv:3,type:'MC',cat:'Angka Terkecil',q:'Manakah angka yang TERKECIL?\n\n10   1   0.999   0.33   11',c:['10','1','0.999','0.33','11'],a:3,exp:'0.33 terkecil.'},
-{id:37,lv:3,type:'MC',cat:'Persamaan Makna',q:'Apakah makna kedua kalimat ini?\n\n"Sapu baru menyapu bersih."\n"Sepatu lama terasa makin nyaman."',c:['Sama','Berlawanan','Tidak sama atau berlawanan'],a:1,exp:'Berlawanan.'},
-{id:38,lv:3,type:'MC',cat:'Klasifikasi',q:'Manakah kata yang BERBEDA dari yang lain?\n\nkoloni  persekutuan  kawanan  kru  konstelasi',c:['koloni','persekutuan','kawanan','kru','konstelasi'],a:4,exp:'"Konstelasi" = kelompok bintang.'},
-{id:39,lv:3,type:'MC',cat:'Silogisme',q:'Anggap dua pernyataan pertama benar. Apakah pernyataan terakhir?\n\n"Orang berpengaruh sering ditipu. Saya sering ditipu. Saya adalah orang berpengaruh."',c:['Benar','Salah','Tidak Tahu'],a:2,exp:'TIDAK TAHU.'},
-{id:40,lv:3,type:'TEXT',cat:'Aritmatika',q:'Untuk cetak artikel 30.000 kata:\n- Teks besar: 1.200 kata/halaman\n- Teks kecil: 1.500 kata/halaman\nTotal: 22 halaman. Berapa halaman teks KECIL?',a:'12',alt:['12 halaman','dua belas'],exp:'1500x + 1200(22-x) = 30000. x=12.'},
-{id:41,lv:3,type:'MC',cat:'Persamaan Makna',q:'Apakah makna kedua kalimat ini?\n\n"Tidak ada orang jujur meminta maaf atas kejujurannya."\n"Kejujuran dihormati namun lapar pujian."',c:['Sama','Berlawanan','Tidak sama atau berlawanan'],a:2,exp:'Berbeda fokus.'},
-{id:42,lv:3,type:'TEXT',cat:'Aritmatika',q:'Pipa A mengisi kolam dalam 4 jam. Pipa B menguras dalam 6 jam.\nJika keduanya jalan bersamaan, berapa jam kolam penuh?',a:'12',alt:['12 jam'],exp:'1/4 - 1/6 = 1/12. Waktu = 12 jam.'},
-{id:43,lv:3,type:'TEXT',cat:'Aritmatika',q:'Rata-rata 5 angka adalah 18.\n4 angka pertama: 12, 15, 22, 25.\nBerapa angka kelima?',a:'16',alt:['enam belas'],exp:'90 - 74 = 16.'},
-{id:44,lv:3,type:'TEXT',cat:'Aritmatika',q:'Keran bocor 2 liter/jam. Tangki 50 liter sudah 80% penuh.\nBerapa jam hingga tangki kosong?',a:'20',alt:['20 jam'],exp:'40/2 = 20 jam.'},
-{id:45,lv:3,type:'TEXT',cat:'Aritmatika',q:'A selesaikan pekerjaan dalam 10 hari. B dalam 15 hari.\nJika bekerja bersama, berapa hari selesai?',a:'6',alt:['6 hari','enam'],exp:'1/10 + 1/15 = 1/6. Waktu = 6 hari.'},
-{id:46,lv:3,type:'TEXT',cat:'Aritmatika',q:'Toko beri diskon 25%, lalu diskon tambahan 20%.\nHarga awal Rp 100.000. Berapa harga akhir?',a:'60000',alt:['Rp60000','60.000','Rp 60.000'],exp:'100.000 x 0.75 x 0.80 = 60.000.'},
-{id:47,lv:3,type:'TEXT',cat:'Aritmatika',q:'3 orang bagi keuntungan RATA. X investasi Rp4.500, Y Rp3.500, Z Rp2.000.\nKeuntungan Rp1.500. Berapa yang diterima X jika dibagi RATA?',a:'500',alt:['Rp500','Rp 500'],exp:'1.500/3 = Rp500 per orang.'},
-{id:48,lv:3,type:'TEXT',cat:'Aritmatika',q:'Harga grosir kardus 12 lusin Rp 2.400. 2 lusin busuk sebelum terjual.\nJual per lusin berapa agar untung 1/3 dari harga beli?',a:'320',alt:['Rp320','Rp 320'],exp:'Target = 3.200. Terjual 10 lusin. 3200/10 = Rp320.'},
-{id:49,lv:3,type:'TEXT',cat:'Aritmatika',q:'Jam terlambat 26 detik dalam 50 jam. Berapa detik terlambat per 1/2 jam?',a:'0.26',alt:['0,26'],exp:'26/50 = 0.52/jam. Per 1/2 jam = 0.26 detik.'},
-{id:50,lv:3,type:'TEXT',cat:'Aritmatika',q:'Sebuah rok butuh 2,25 meter kain. Ada 45 meter. Berapa rok yang bisa dibuat?',a:'20',alt:['dua puluh','20 potong'],exp:'45/2.25 = 20 rok.'},
-];
-
-// ══════════════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════════════
-let userData={nama:'',jabatan:'',kode:''};
-let questions=[],currentIdx=0,score=0,answers=[];
-let timerInt=null,secondsLeft=720,answered=false,quizEnded=false;
-let kodeLog=[],currentKode='',currentGenNama='',currentGenJabatan='';
-
-// ══════════════════════════════════════════════════════
-// UTILS
-// ══════════════════════════════════════════════════════
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
-function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
-function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
-function genKode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join('');}
-function showToast(msg,ok=true){let t=document.getElementById('_toast');if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:13px 26px;border-radius:12px;font-family:Syne,sans-serif;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 4px 24px rgba(0,0,0,.3);transition:opacity .4s;';document.body.appendChild(t);}t.textContent=msg;t.style.background=ok?'#15803D':'#B91C1C';t.style.color='#fff';t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',4000);}
-
-function setSendStatus(id,icon,text,spinning=false){
-  const el=document.getElementById('icon-'+id);
-  if(!el)return;
-  el.textContent=icon;
-  el.className='send-icon'+(spinning?' spin':'');
-  document.getElementById('text-'+id).textContent=text;
+    <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
+      <input type="checkbox" id="f_agree" style="width:18px;height:18px;margin-top:2px;cursor:pointer;accent-color:var(--blue);flex-shrink:0;">
+      <span style="font-size:13px;color:var(--dark);line-height:1.6;">Saya menyatakan bahwa semua data yang saya isi adalah benar dan dapat dipertanggungjawabkan.</span>
+    </label>
+  </div>`;
 }
 
-// ══════════════════════════════════════════════════════
-// ADMIN
-// ══════════════════════════════════════════════════════
-function adminLogin(){const v=document.getElementById('admin-pw-inp').value;const err=document.getElementById('admin-pw-err');if(v===ADMIN_PASSWORD){document.getElementById('admin-pw-inp').value='';err.textContent='';renderLog();showScreen('screen-admin');}else{err.textContent='Password salah.';setTimeout(()=>err.textContent='',3000);}}
-function adminLogout(){showScreen('screen-admin-login');}
-function generateKode(){const nama=document.getElementById('gen-nama').value.trim();const jabatan=document.getElementById('gen-jabatan').value.trim();if(!nama){showToast('Nama peserta wajib diisi.',false);return;}const kode=genKode();currentKode=kode;currentGenNama=nama;currentGenJabatan=jabatan;const ts=new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});document.getElementById('cr-peserta').textContent=nama+(jabatan?' — '+jabatan:'');document.getElementById('cr-kode').textContent=kode;document.getElementById('code-result').classList.add('show');kodeLog.push({nama,jabatan,kode,ts,used:false});renderLog();fireAndForget({action:'generateKode',nama,jabatan,kode,timestamp:ts});showToast('Kode dibuat!');}
-function copyKode(){navigator.clipboard.writeText(currentKode).then(()=>showToast('Kode '+currentKode+' disalin!'));}
-function kirimWA(){const teks=`Halo ${currentGenNama}, berikut kode akses tes seleksi Anda:\n\n*${currentKode}*\n\nMasukkan kode ini di halaman tes. Berlaku 3 jam.`;window.open('https://wa.me/?text='+encodeURIComponent(teks),'_blank');}
-function renderLog(){const tbody=document.getElementById('log-body');if(!kodeLog.length){tbody.innerHTML='<tr><td colspan="4" class="empty-log">Belum ada kode yang dibuat</td></tr>';return;}tbody.innerHTML=kodeLog.slice().reverse().map(k=>`<tr><td>${k.nama}</td><td>${k.jabatan||'—'}</td><td><strong style="font-family:Syne,sans-serif;letter-spacing:2px;">${k.kode}</strong></td><td>${k.used?'<span class="tag-used">Dipakai</span>':'<span class="tag-fresh">Belum</span>'}</td></tr>`).join('');}
-
-// ══════════════════════════════════════════════════════
-// PESERTA MASUK KODE
-// ══════════════════════════════════════════════════════
-function pesertaMasuk(){
-  const nama=document.getElementById('p-nama').value.trim();
-  const jabatan=document.getElementById('p-jabatan').value.trim();
-  const kode=document.getElementById('p-kode').value.toUpperCase().trim();
-  const err=document.getElementById('kode-err');
-  const btn=document.querySelector('#screen-kode .btn-gold');
-  if(!nama){err.textContent='Nama wajib diisi.';return;}
-  if(!kode||kode.length!==6){err.textContent='Kode harus 6 karakter.';return;}
-  err.textContent='';btn.textContent='Memeriksa...';btn.disabled=true;
-  const localEntry=kodeLog.find(k=>k.kode===kode&&!k.used);
-  if(localEntry){btn.textContent='Lanjut →';btn.disabled=false;localEntry.used=true;renderLog();userData={nama,jabatan,kode};document.getElementById('intro-nama').textContent=nama;document.getElementById('intro-jabatan').textContent=jabatan||'';showScreen('screen-intro');return;}
-  const url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify({action:'validateKode',kode}));
-  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),10000);
-  fetch(url,{signal:controller.signal}).then(r=>r.json()).then(res=>{clearTimeout(timeout);btn.textContent='Lanjut →';btn.disabled=false;if(res.valid){userData={nama,jabatan,kode};document.getElementById('intro-nama').textContent=nama;document.getElementById('intro-jabatan').textContent=jabatan||'';const entry=kodeLog.find(k=>k.kode===kode);if(entry)entry.used=true;renderLog();showScreen('screen-intro');}else{err.textContent='Kode tidak valid. Minta kode baru dari admin.';}}).catch(e=>{clearTimeout(timeout);btn.textContent='Lanjut →';btn.disabled=false;err.textContent=e.name==='AbortError'?'Server timeout.':'Gagal terhubung ke server.';});
-}
-
-// ══════════════════════════════════════════════════════
-// QUIZ
-// ══════════════════════════════════════════════════════
-function startQuiz(){
-  questions=[...shuffle(BANK.filter(q=>q.lv===1)),...shuffle(BANK.filter(q=>q.lv===2)),...shuffle(BANK.filter(q=>q.lv===3))].map(q=>{
-    if(q.type==='MC'){const sh=shuffle(q.c.map((t,i)=>({t,i})));return{...q,c:sh.map(x=>x.t),a:sh.findIndex(x=>x.i===q.a)};}
-    return{...q};
-  });
-  document.getElementById('hdr-name').textContent=userData.nama;
-  currentIdx=0;score=0;answers=[];secondsLeft=720;answered=false;quizEnded=false;
-  showScreen('screen-quiz');startTimer();renderQ();
-}
-function startTimer(){clearInterval(timerInt);updateTimer();timerInt=setInterval(()=>{secondsLeft--;updateTimer();if(secondsLeft<=0){clearInterval(timerInt);endQuiz();}},1000);}
-function updateTimer(){const el=document.getElementById('timer-val');el.textContent=fmt(secondsLeft);el.className='timer-val'+(secondsLeft<=60?' danger':secondsLeft<=180?' warn':'');}
-function renderQ(){
-  const q=questions[currentIdx];answered=false;
-  document.getElementById('q-counter').textContent=`Soal ${currentIdx+1} dari ${questions.length}`;
-  document.getElementById('q-tag').textContent=`SOAL #${currentIdx+1}`;
-  document.getElementById('pb-fill').style.width=(currentIdx/questions.length*100)+'%';
-  document.getElementById('pb-txt').textContent=`${currentIdx}/${questions.length}`;
-  const lvEl=document.getElementById('q-lvl');
-  lvEl.className='qlvl '+(q.lv===1?'easy':q.lv===2?'medium':'hard');
-  lvEl.textContent=q.lv===1?'Mudah':q.lv===2?'Sedang':'Sulit';
-  document.getElementById('q-cat').textContent=q.cat;
-  document.getElementById('q-txt').textContent=q.q;
-  document.getElementById('fbbox').style.display='none';
-  if(q.type==='MC'){document.getElementById('choices').style.display='flex';document.getElementById('txt-wrap').style.display='none';renderMC(q);}
-  else{document.getElementById('choices').style.display='none';document.getElementById('txt-wrap').style.display='flex';const inp=document.getElementById('txt-inp');inp.value='';inp.className='txt-ans-inp';inp.disabled=false;document.getElementById('btn-cek').disabled=false;setTimeout(()=>inp.focus(),150);}
-}
-function renderMC(q){const list=document.getElementById('choices');list.innerHTML='';['A','B','C','D','E'].slice(0,q.c.length).forEach((l,i)=>{const btn=document.createElement('button');btn.className='cbtn';btn.innerHTML=`<span class="cletter">${l}</span><span>${q.c[i]}</span>`;btn.onclick=()=>pickMC(i,q);list.appendChild(btn);});}
-function pickMC(idx,q){if(answered)return;answered=true;document.querySelectorAll('.cbtn').forEach(b=>b.disabled=true);const ok=idx===q.a;if(ok)score++;answers.push({nomor:currentIdx+1,q:q.q,chosen:q.c[idx],correct:q.c[q.a],ok,cat:q.cat,lv:q.lv});setTimeout(()=>{currentIdx+1<questions.length?nextQ():endQuiz();},350);}
-function cekTeks(){if(answered)return;const q=questions[currentIdx];const inp=document.getElementById('txt-inp');const val=inp.value.trim();if(!val)return;answered=true;inp.disabled=true;document.getElementById('btn-cek').disabled=true;const ok=[q.a.toString(),...(q.alt||[])].map(x=>x.toString().toLowerCase().trim()).includes(val.toLowerCase().trim());if(ok)score++;answers.push({nomor:currentIdx+1,q:q.q,chosen:val,correct:q.a.toString(),ok,cat:q.cat,lv:q.lv});setTimeout(()=>{currentIdx+1<questions.length?nextQ():endQuiz();},350);}
-function nextQ(){currentIdx++;if(currentIdx>=questions.length)endQuiz();else{renderQ();window.scrollTo(0,0);}}
-
-// ══════════════════════════════════════════════════════
-// END QUIZ — peserta hanya lihat "Tes Selesai"
-// ══════════════════════════════════════════════════════
-function endQuiz(){
-  if(quizEnded)return;
-  quizEnded=true;
-  clearInterval(timerInt);
-  showScreen('screen-result');
-
-  // Tampilkan nama peserta, TIDAK ada skor
-  document.getElementById('res-nama').textContent=userData.nama;
-
-  const total=answers.length;
-  const persen=total>0?Math.round(score/total*100):0;
-  const grade=persen>=90?'A':persen>=75?'B':persen>=60?'C':persen>=40?'D':'E';
-  const kategori=score>=35?'Sangat Tinggi (Superior)':score>=30?'Tinggi':score>=25?'Di Atas Rata-Rata':score>=20?'Rata-Rata':score>=15?'Rata-Rata Bawah':'Di Bawah Rata-Rata';
-  const ts=new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});
-
-  const payload={
-    action:'submitResultWithPDF',
-    timestamp:ts,
-    nama:userData.nama,
-    jabatan:userData.jabatan,
-    kode:userData.kode,
-    score,total,persen,grade,kategori,
-    waktuTersisa:fmt(Math.max(0,secondsLeft)),
-    answersJSON:JSON.stringify(answers)
-  };
-
-  // Kirim ke Apps Script (Apps Script yg generate PDF & email)
-  setSendStatus('email','⏳','Mengirim laporan ke HRD...',true);
-  fireAndForget(payload).then(ok=>{
-    setSendStatus('email', ok?'✅':'⚠️', ok?'Laporan terkirim ke hrdgamemorial@gmail.com':'Email gagal (cek Apps Script)');
-  });
-
-  // Discord — detail lengkap
-  setSendStatus('discord','⏳','Mengirim notifikasi Discord...',true);
-  kirimDiscord(payload).then(ok=>{
-    setSendStatus('discord', ok?'✅':'⚠️', ok?'Notifikasi Discord terkirim':'Discord gagal');
-  });
-
-  // Google Sheet
-  setSendStatus('sheet','⏳','Menyimpan ke Google Sheets...',true);
-  // Sheet sudah di-handle dalam submitResultWithPDF di Apps Script
-  setTimeout(()=>setSendStatus('sheet','✅','Data tersimpan di Google Sheets'),8000);
-}
-
-// ══════════════════════════════════════════════════════
-// NETWORK HELPERS
-// ══════════════════════════════════════════════════════
-function fireAndForget(payload){
-  return new Promise(resolve=>{
-    if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.includes('PASTE')){resolve(false);return;}
-    const url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify(payload));
-    const iframe=document.createElement('iframe');iframe.style.display='none';iframe.src=url;
-    let done=false;
-    iframe.onload=()=>{if(!done){done=true;setTimeout(()=>{try{document.body.removeChild(iframe);}catch(e){}},1000);resolve(true);}};
-    iframe.onerror=()=>{if(!done){done=true;resolve(false);}};
-    document.body.appendChild(iframe);
-    setTimeout(()=>{if(!done){done=true;try{document.body.removeChild(iframe);}catch(e){}resolve(false);}},15000);
+// ══════════════════════════════
+// SAVE & RESTORE
+// ══════════════════════════════
+function saveStep(n){
+  if(!formData[n]) formData[n]={};
+  document.querySelectorAll('#form-body input, #form-body select, #form-body textarea').forEach(el=>{
+    if(el.type==='radio'){ if(el.checked) formData[n][el.name]=el.value; }
+    else if(el.type==='checkbox'){ formData[n][el.id]=el.checked; }
+    else if(el.id){ formData[n][el.id]=el.value; }
   });
 }
-
-function kirimDiscord(payload){
-  return new Promise(resolve=>{
-    const benar=answers.filter(a=>a.ok).length;
-    const salah=answers.filter(a=>!a.ok).length;
-    let detail='';
-    answers.forEach(a=>{
-      if(detail.length>1500){detail+='_(lanjutan tersedia di PDF/Sheet)_\n';return;}
-      detail+=`${a.ok?'✅':'❌'} **S${a.nomor}** [${a.cat}] ${a.q.split('\n')[0].substring(0,45)}${a.q.length>45?'...':''}\n   Jawab: \`${a.chosen}\` | Kunci: \`${a.correct}\`\n`;
+function restoreStep(n){
+  if(!formData[n]) return;
+  const data=formData[n];
+  setTimeout(()=>{
+    Object.keys(data).forEach(key=>{
+      const el=document.getElementById(key);
+      if(el){
+        if(el.type==='checkbox') el.checked=!!data[key];
+        else el.value=data[key]||'';
+      }
+      document.querySelectorAll(`input[name="${key}"]`).forEach(r=>{ if(r.value===data[key]) r.checked=true; });
     });
-    const embed={embeds:[{
-      title:'📋 Hasil Tes WPT — '+payload.nama,
-      color:0xD4A843,
-      fields:[
-        {name:'👤 Nama',value:payload.nama||'—',inline:true},
-        {name:'💼 Jabatan',value:payload.jabatan||'—',inline:true},
-        {name:'📅 Tanggal',value:payload.timestamp,inline:false},
-        {name:'🎯 Skor',value:`**${payload.score} / ${payload.total}** — Grade **${payload.grade}** (${payload.persen}%)`,inline:false},
-        {name:'📊 Kategori',value:payload.kategori,inline:true},
-        {name:'⏱️ Waktu Tersisa',value:payload.waktuTersisa,inline:true},
-        {name:'✅ Benar / ❌ Salah',value:`${benar} benar, ${salah} salah dari ${answers.length} soal dijawab`,inline:false},
-        {name:'📝 Detail Jawaban',value:detail||'(tidak ada jawaban)',inline:false},
-        {name:'📄 PDF',value:'PDF laporan digenerate oleh Apps Script → hrdgamemorial@gmail.com',inline:false},
-      ],
-      footer:{text:'PT. KPUS Assessment System | WPT'}
-    }]};
-    fetch(DISCORD_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(embed)}).then(r=>resolve(r.ok)).catch(()=>resolve(false));
-  });
+  },10);
 }
+
+// ══════════════════════════════
+// NAV
+// ══════════════════════════════
+function nextStep(){
+  if(!validateStep(currentStep)) return;
+  saveStep(currentStep);
+  if(currentStep===TOTAL_STEPS-1) submitForm();
+  else renderStep(currentStep+1);
+}
+function prevStep(){
+  saveStep(currentStep);
+  if(currentStep>0) renderStep(currentStep-1);
+}
+
+function validateStep(n){
+  if(n===0){
+    const nama=document.getElementById('f_nama');
+    if(!nama||!nama.value.trim()){showToast('⚠️ Nama lengkap wajib diisi');nama&&nama.focus();return false;}
+    const hp=document.getElementById('f_hp');
+    if(!hp||!hp.value.trim()){showToast('⚠️ No. HP wajib diisi');hp&&hp.focus();return false;}
+    const ktp=document.getElementById('f_ktp');
+    if(!ktp||!ktp.value.trim()){showToast('⚠️ No. KTP wajib diisi');ktp&&ktp.focus();return false;}
+  }
+  if(n===TOTAL_STEPS-1){
+    const gaji=document.getElementById('f_gaji_harap');
+    if(!gaji||!gaji.value.trim()){showToast('⚠️ Gaji yang diharapkan wajib diisi');gaji&&gaji.focus();return false;}
+    const agree=document.getElementById('f_agree');
+    if(!agree||!agree.checked){showToast('⚠️ Centang pernyataan kebenaran data terlebih dahulu');return false;}
+  }
+  return true;
+}
+
+// ══════════════════════════════
+// SUBMIT
+// ══════════════════════════════
+function submitForm(){
+  saveStep(currentStep);
+  const flat={posisi:introData.posisi, tanggal_tersedia:introData.tanggal};
+  Object.values(formData).forEach(s=>Object.assign(flat,s));
+  delete flat.f_agree;
+  flat.timestamp=new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});
+
+  kirimKeServer(flat);
+
+  document.getElementById('rd-nama').textContent=flat.f_nama||'—';
+  document.getElementById('rd-posisi').textContent=introData.posisi||'—';
+  document.getElementById('rd-tgl').textContent=flat.timestamp;
+  showScreen('screen-result');
+}
+
+function kirimKeServer(payload){
+  if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.includes('PASTE')) return;
+  const url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify(payload));
+  const iframe=document.createElement('iframe');
+  iframe.style.display='none'; iframe.src=url;
+  iframe.onload=()=>setTimeout(()=>{try{document.body.removeChild(iframe);}catch(e){}},3000);
+  iframe.onerror=()=>{try{document.body.removeChild(iframe);}catch(e){}};
+  document.body.appendChild(iframe);
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('screen-intro').classList.contains('active')) startForm();
+});
 </script>
 </body>
 </html>
