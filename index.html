@@ -668,7 +668,26 @@ function validateStep(n){
     const ktp=document.getElementById('f_ktp');
     if(!ktp||!ktp.value.trim()){showToast('⚠️ No. KTP wajib diisi');ktp&&ktp.focus();return false;}
   }
-  if(n===TOTAL_STEPS-1){
+  // Section E — Kesehatan: semua pertanyaan wajib dijawab
+  if(n===4){
+    const ksQ=['k1','k2','k3','k4','k5','k6','k7','k8','k9'];
+    const ksLabel=['Kondisi medis/cacat','Berhenti krn sakit','Gagal pemeriksaan medis',
+      'Menunggu perawatan RS','Pengawasan medis','Minum obat rutin',
+      'Alergi makanan/obat','Absen sakit ≥2 minggu','Sedang hamil'];
+    for(let i=0;i<ksQ.length-1;i++){ // k9 (hamil) opsional
+      const answered=document.querySelector(`input[name="${ksQ[i]}"]:checked`);
+      if(!answered){showToast(`⚠️ Wajib dijawab: ${ksLabel[i]}`);return false;}
+    }
+  }
+  // Section F — Informasi Lainnya: semua wajib dijawab
+  if(n===5){
+    const lQ=['l1','l2','l3','l4','l5'];
+    const lLabel=['Pernah dihukum','Pernah bangkrut','Pekerjaan sampingan',
+      'Pernah psikotest','Bersedia luar kota'];
+    for(let i=0;i<lQ.length;i++){
+      const answered=document.querySelector(`input[name="${lQ[i]}"]:checked`);
+      if(!answered){showToast(`⚠️ Wajib dijawab: ${lLabel[i]}`);return false;}
+    }
     const gaji=document.getElementById('f_gaji_harap');
     if(!gaji||!gaji.value.trim()){showToast('⚠️ Gaji yang diharapkan wajib diisi');gaji&&gaji.focus();return false;}
     const agree=document.getElementById('f_agree');
