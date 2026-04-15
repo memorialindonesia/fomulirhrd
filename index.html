@@ -213,7 +213,7 @@ select.inp-l { cursor:pointer; }
 // ══════════════════════════════
 // CONFIG
 // ══════════════════════════════
-const APPS_SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFDwflbyHZVX_D8I4k6tn_qT3DK3sN3MKmz0Qv-Qo6dpEyvfioNUDyki3zsMolpFEd/exec';
 const ACCESS_PASSWORD = 'LMP2025'; // ← ganti sesuai keinginan Anda
 
 let currentStep = 0;
@@ -719,22 +719,14 @@ function submitForm(){
 }
 
 function kirimKeServer(payload){
-  if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.includes('PASTE')) return;
+  if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.includes('PASTE')){
+    showToast('⚠️ APPS_SCRIPT_URL belum diisi!'); return;
+  }
   const url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify(payload));
-  // Method 1: fetch no-cors
-  fetch(url,{method:'GET',mode:'no-cors'}).catch(()=>{});
-  // Method 2: form submit (paling reliable menembus redirect)
-  try{
-    const f=document.createElement('form');
-    f.method='GET'; f.action=APPS_SCRIPT_URL; f.target='_blank';
-    f.style.display='none';
-    const i=document.createElement('input');
-    i.type='hidden'; i.name='data'; i.value=JSON.stringify(payload);
-    f.appendChild(i);
-    document.body.appendChild(f);
-    f.submit();
-    setTimeout(()=>{try{document.body.removeChild(f);}catch(e){}},3000);
-  }catch(e){}
+  showToast('📡 Mengirim data...');
+  fetch(url,{method:'GET',mode:'no-cors'})
+    .then(()=>{ showToast('✅ Data terkirim ke server!'); })
+    .catch(err=>{ showToast('❌ Error: '+err); });
 }
 
 document.addEventListener('keydown',e=>{
