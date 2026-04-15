@@ -142,6 +142,10 @@ select.inp-l { cursor:pointer; }
   </div>
 
   <button class="btn-gold" onclick="doLogin()">Buka Formulir →</button>
+  <button onclick="isiDummy()" style="margin-top:14px;background:rgba(212,168,67,.15);border:1px dashed rgba(212,168,67,.5);color:#D4A843;font-family:Syne,sans-serif;font-size:12px;font-weight:700;padding:10px 28px;border-radius:10px;cursor:pointer;letter-spacing:1px;">
+    🧪 ISI DATA DUMMY (TEST)
+  </button>
+  <p style="margin-top:8px;font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.5px;">Tombol ini hanya untuk testing — akan dihapus</p>
 </div>
 
 <!-- ══════════ SCREEN 1: INTRO ══════════ -->
@@ -717,14 +721,129 @@ function submitForm(){
 function kirimKeServer(payload){
   if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.includes('PASTE')) return;
   const url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify(payload));
-  fetch(url,{method:'GET',mode:'no-cors'}).catch(()=>{
-    const img=new Image(); img.src=url;
-  });
+  // Method 1: fetch no-cors
+  fetch(url,{method:'GET',mode:'no-cors'}).catch(()=>{});
+  // Method 2: form submit (paling reliable menembus redirect)
+  try{
+    const f=document.createElement('form');
+    f.method='GET'; f.action=APPS_SCRIPT_URL; f.target='_blank';
+    f.style.display='none';
+    const i=document.createElement('input');
+    i.type='hidden'; i.name='data'; i.value=JSON.stringify(payload);
+    f.appendChild(i);
+    document.body.appendChild(f);
+    f.submit();
+    setTimeout(()=>{try{document.body.removeChild(f);}catch(e){}},3000);
+  }catch(e){}
 }
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&document.getElementById('screen-intro').classList.contains('active')) startForm();
 });
+
+// ══════════════════════════════
+// DUMMY DATA — hapus setelah testing selesai
+// ══════════════════════════════
+function isiDummy(){
+  // Intro
+  document.getElementById('intro-posisi').value='Marketing Executive';
+  document.getElementById('intro-tanggal').value='01/06/2026';
+
+  // Langsung mulai form
+  introData.posisi='Marketing Executive';
+  introData.tanggal='01/06/2026';
+  buildStepDots();
+  renderStep(0);
+  showScreen('screen-form');
+
+  // Isi semua field setelah render
+  setTimeout(()=>{ isiSemuaStep(); }, 100);
+}
+
+function isiSemuaStep(){
+  // ── Step 0: Info Pribadi ──
+  const s0 = {
+    f_nama:'Budi Santoso', f_panggilan:'Budi',
+    f_alamat_ktp:'Jl. Mawar No. 12, RT 03/RW 05, Cipondoh, Tangerang, Banten',
+    f_alamat_skrg:'Jl. Melati No. 7, Karawaci, Tangerang',
+    f_hp:'081234567890', f_email:'budi.santoso@gmail.com',
+    f_ktp:'3671051505900001', f_tempat_lahir:'Tangerang',
+    f_tgl_lahir:'15/05/1990', f_jk:'Pria', f_kebangsaan:'Indonesia',
+    f_agama:'Islam', f_status_kawin:'Kawin', f_npwp:'12.345.678.9-001.000',
+    f_jamsostek:'1234567890', f_status_tinggal:'Milik Sendiri',
+    f_kendaraan:'B 1234 XYZ — Honda Beat 2020'
+  };
+  // ── Step 1: Keluarga ──
+  const s1 = {
+    f_ayah_nama:'Santoso', f_ayah_pekerjaan:'Wiraswasta',
+    f_ibu_nama:'Sri Wahyuni', f_ibu_pekerjaan:'Ibu Rumah Tangga',
+    f_sdr1_nama:'Dewi Santoso', f_sdr1_jk:'P', f_sdr1_pend:'S1', f_sdr1_usia:'28', f_sdr1_pekerjaan:'Guru',
+    f_sdr2_nama:'Eko Santoso', f_sdr2_jk:'L', f_sdr2_pend:'SMA', f_sdr2_usia:'24', f_sdr2_pekerjaan:'Karyawan Swasta',
+    f_pasangan_nama:'Sari Dewi', f_pasangan_usia:'29', f_pasangan_pekerjaan:'Karyawan',
+    f_pasangan_perusahaan:'PT. Maju Bersama', f_pasangan_pend:'S1',
+    f_anak1_nama:'Rizki Santoso', f_anak1_jk:'L', f_anak1_lahir:'10/03/2018',
+    f_anak2_nama:'Nayla Santoso', f_anak2_jk:'P', f_anak2_lahir:'22/07/2020'
+  };
+  // ── Step 2: Kualifikasi ──
+  const s2 = {
+    f_sd_nama:'SDN Cipondoh 1', f_sd_kota:'Tangerang', f_sd_dari:'1996', f_sd_sampai:'2002', f_sd_lulus:'Lulus',
+    f_smp_nama:'SMPN 5 Tangerang', f_smp_kota:'Tangerang', f_smp_dari:'2002', f_smp_sampai:'2005', f_smp_lulus:'Lulus',
+    f_sma_nama:'SMAN 2 Tangerang', f_sma_kota:'Tangerang', f_sma_jurusan:'IPS', f_sma_dari:'2005', f_sma_sampai:'2008', f_sma_lulus:'Lulus',
+    f_univ_nama:'Universitas Pancasila', f_univ_kota:'Jakarta', f_univ_jurusan:'Manajemen', f_univ_dari:'2008', f_univ_sampai:'2012', f_univ_lulus:'Lulus',
+    f_kursus1_jenis:'Digital Marketing', f_kursus1_penyelenggara:'Google Activate', f_kursus1_tahun:'2019', f_kursus1_biaya:'Sendiri',
+    f_kursus2_jenis:'Leadership Training', f_kursus2_penyelenggara:'Dale Carnegie', f_kursus2_tahun:'2021', f_kursus2_biaya:'Perusahaan',
+    f_komp_word:'Baik Sekali', f_komp_excel:'Baik', f_komp_ppt:'Baik',
+    f_komp_lain:'Canva, Google Workspace, Salesforce CRM',
+    f_bhs_indo_nama:'Indonesia', f_bhs_indo_dengar:'Baik Sekali', f_bhs_indo_baca:'Baik Sekali', f_bhs_indo_bicara:'Baik Sekali', f_bhs_indo_tulis:'Baik Sekali',
+    f_bhs_eng_nama:'Inggris', f_bhs_eng_dengar:'Baik', f_bhs_eng_baca:'Baik', f_bhs_eng_bicara:'Cukup', f_bhs_eng_tulis:'Baik',
+    f_organisasi:'BEM Universitas Pancasila 2010-2011 (Ketua Divisi Humas)',
+    f_hobi:'Membaca, Berolahraga, Traveling'
+  };
+  // ── Step 3: Pengalaman ──
+  const s3 = {
+    f_exp1_perusahaan:'PT. Cahaya Nusantara', f_exp1_jenis:'Distribusi FMCG',
+    f_exp1_jabatan_awal:'Sales Representative', f_exp1_jabatan_akhir:'Senior Sales',
+    f_exp1_mulai:'03/2013', f_exp1_sampai:'12/2016',
+    f_exp1_jml_karyawan:'250', f_exp1_status:'Tetap',
+    f_exp1_gaji:'Rp 6.500.000 + Komisi + BPJS',
+    f_exp1_alasan:'Ingin pengembangan karir lebih baik',
+    f_exp2_perusahaan:'PT. Maju Sejahtera Tbk', f_exp2_jenis:'Consumer Goods',
+    f_exp2_jabatan_awal:'Marketing Supervisor', f_exp2_jabatan_akhir:'Marketing Manager',
+    f_exp2_mulai:'01/2017', f_exp2_sampai:'03/2024',
+    f_exp2_jml_karyawan:'800', f_exp2_status:'Tetap',
+    f_exp2_gaji:'Rp 12.000.000 + Bonus + BPJS + Uang Makan',
+    f_exp2_alasan:'Mencari tantangan baru di industri berbeda',
+    f_job_desc:'Memimpin tim marketing 8 orang, menyusun strategi pemasaran tahunan, mengelola anggaran marketing Rp 2M/tahun, menjalin kerjasama dengan distributor dan agen, meningkatkan brand awareness melalui digital dan offline campaign.',
+    f_ref1_nama:'Hendra Kusuma', f_ref1_jabatan:'Direktur Pemasaran, PT. Maju Sejahtera',
+    f_ref1_telp:'0812-9999-8888', f_ref1_hubungan:'Atasan langsung',
+    f_ref2_nama:'Rina Marlina', f_ref2_jabatan:'HR Manager, PT. Cahaya Nusantara',
+    f_ref2_telp:'0813-7777-6666', f_ref2_hubungan:'HR Perusahaan'
+  };
+  // ── Step 4: Kesehatan ──
+  const s4 = {
+    f_gol_darah:'O', f_berat:'72', f_tinggi:'172',
+    k1:'Tidak', k2:'Tidak', k3:'Tidak', k4:'Tidak',
+    k5:'Tidak', k6:'Tidak', k7:'Ya', k7_ket:'Alergi seafood',
+    k8:'Tidak', k9:'Tidak'
+  };
+  // ── Step 5: Lainnya ──
+  const s5 = {
+    l1:'Tidak', l2:'Tidak', l3:'Tidak', l4:'Ya', l4_ket:'Psikotest di PT. Maju Sejahtera tahun 2017',
+    l5:'Ya',
+    f_gaji_harap:'Rp 15.000.000', f_tunjangan_harap:'BPJS Kesehatan & Ketenagakerjaan, Uang Makan, Transport',
+    f_agree: true
+  };
+
+  // Simpan ke formData semua step sekaligus
+  formData[0]=s0; formData[1]=s1; formData[2]=s2; formData[3]=s3; formData[4]=s4; formData[5]=s5;
+
+  // Restore step saat ini (step 0)
+  restoreStep(0);
+
+  // Set radio Ya/Tidak untuk kesehatan dan lainnya (diset saat step render)
+  showToast('✅ Data dummy berhasil diisi! Klik Lanjut di tiap step.');
+}
+
 </script>
 </body>
 </html>
