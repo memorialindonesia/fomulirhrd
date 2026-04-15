@@ -770,16 +770,25 @@ function kirimKeServer(payload){
   dbg('info','Mengirim via fetch...');
   showToast('📡 Mengirim data...');
 
-  fetch(url,{method:'GET',mode:'no-cors'})
-    .then(()=>{
-      dbg('ok','✅ fetch() completed (no-cors)');
-      dbg('warn','Cek Executions di Apps Script!');
-      showToast('✅ Fetch OK — cek Sheet/Discord/Drive');
-    })
-    .catch(err=>{
-      dbg('err','❌ fetch error: '+err);
-      showToast('❌ Fetch error: '+err);
-    });
+  dbg('info','Mengirim via script tag injection...');
+  showToast('📡 Mengirim data...');
+
+  // Script tag injection — satu-satunya cara yang benar-benar menembus
+  // Google Apps Script redirect dari domain manapun termasuk GitHub Pages
+  const s = document.createElement('script');
+  s.src = url + '&callback=__asCallback&t=' + Date.now();
+  s.onload = ()=>{
+    dbg('ok','✅ Script tag loaded — data sampai ke Apps Script!');
+    showToast('✅ Data terkirim!');
+    try{ document.head.removeChild(s); }catch(e){}
+  };
+  s.onerror = ()=>{
+    dbg('warn','Script onerror (bisa normal untuk JSONP) — cek Executions');
+    showToast('📡 Cek Executions Apps Script');
+    try{ document.head.removeChild(s); }catch(e){}
+  };
+  document.head.appendChild(s);
+  dbg('info','Script tag injected ke: '+url.slice(0,60)+'...');
 }
 
 // Debug helpers
@@ -804,6 +813,16 @@ function clearDebug(){
   const ul=document.getElementById('debug-log');
   ul.innerHTML='<li class="info">Log dibersihkan.</li>';
 }
+
+// JSONP callback dari Apps Script
+window.__asCallback = function(result){
+  if(result && result.status === 'ok'){
+    dbg('ok','✅ Apps Script OK! Drive: '+(result.drive||'—'));
+    showToast('✅ Data tersimpan di Sheet & Drive!');
+  } else {
+    dbg('err','❌ Apps Script error: '+JSON.stringify(result));
+  }
+};
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&document.getElementById('screen-intro').classList.contains('active')) startForm();
