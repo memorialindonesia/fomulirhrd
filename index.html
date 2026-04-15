@@ -118,6 +118,20 @@ select.inp-l { cursor:pointer; }
 @media(max-width:560px){
   .field-group.col2,.field-group.col3 { grid-template-columns:1fr; }
 }
+
+/* DEBUG PANEL */
+#debug-panel { position:fixed; bottom:20px; right:20px; width:320px; max-height:400px; background:#0C1A3A; border:1.5px solid #D4A843; border-radius:12px; z-index:9999; font-family:'Courier New',monospace; font-size:11px; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,.5); }
+#debug-header { background:#D4A843; color:#0C1A3A; padding:8px 12px; font-weight:700; font-size:11px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+#debug-body { padding:10px 12px; overflow-y:auto; max-height:340px; }
+#debug-log { list-style:none; }
+#debug-log li { padding:3px 0; border-bottom:1px solid rgba(255,255,255,.06); color:rgba(255,255,255,.7); line-height:1.5; }
+#debug-log li.ok   { color:#4ADE80; }
+#debug-log li.err  { color:#F87171; }
+#debug-log li.warn { color:#D4A843; }
+#debug-log li.info { color:#60A5FA; }
+#debug-log li.head { color:#FFFFFF; font-weight:700; margin-top:4px; }
+#debug-toggle-btn { background:none; border:none; color:#0C1A3A; cursor:pointer; font-weight:700; font-size:13px; padding:0; }
+#debug-clear-btn { background:rgba(255,255,255,.2); border:none; color:#0C1A3A; cursor:pointer; font-size:10px; padding:2px 8px; border-radius:4px; }
 </style>
 </head>
 <body>
@@ -208,6 +222,23 @@ select.inp-l { cursor:pointer; }
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- DEBUG PANEL -->
+<div id="debug-panel">
+  <div id="debug-header" onclick="toggleDebug()">
+    <span>🔧 DEBUG PANEL</span>
+    <span>
+      <button id="debug-clear-btn" onclick="event.stopPropagation();clearDebug()">hapus</button>
+      &nbsp;
+      <button id="debug-toggle-btn">▼</button>
+    </span>
+  </div>
+  <div id="debug-body">
+    <ul id="debug-log">
+      <li class="info">Panel aktif. Klik ISI DATA DUMMY untuk test.</li>
+    </ul>
+  </div>
+</div>
 
 <script>
 // ══════════════════════════════
@@ -704,11 +735,15 @@ function validateStep(n){
 // SUBMIT
 // ══════════════════════════════
 function submitForm(){
+  dbg('head','=== submitForm() dipanggil ===');
   saveStep(currentStep);
   const flat={posisi:introData.posisi, tanggal_tersedia:introData.tanggal};
   Object.values(formData).forEach(s=>Object.assign(flat,s));
   delete flat.f_agree;
   flat.timestamp=new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});
+  dbg('info','Data terkumpul: '+Object.keys(flat).length+' field');
+  dbg('info','Nama: '+(flat.f_nama||'KOSONG'));
+  dbg('info','HP: '+(flat.f_hp||'KOSONG'));
 
   kirimKeServer(flat);
 
@@ -719,14 +754,55 @@ function submitForm(){
 }
 
 function kirimKeServer(payload){
+  dbg('head','=== SUBMIT ===');
+  dbg('info','Nama: '+(payload.f_nama||'?'));
+  dbg('info','Posisi: '+(payload.posisi||'?'));
+  dbg('info','Keys: '+Object.keys(payload).length+' field');
+
   if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL.includes('PASTE')){
+    dbg('err','❌ APPS_SCRIPT_URL belum diisi!');
     showToast('⚠️ APPS_SCRIPT_URL belum diisi!'); return;
   }
+  dbg('ok','✓ URL valid: '+APPS_SCRIPT_URL.slice(0,50)+'...');
+
   const url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(JSON.stringify(payload));
+  dbg('info','Payload size: '+JSON.stringify(payload).length+' chars');
+  dbg('info','Mengirim via fetch...');
   showToast('📡 Mengirim data...');
+
   fetch(url,{method:'GET',mode:'no-cors'})
-    .then(()=>{ showToast('✅ Data terkirim ke server!'); })
-    .catch(err=>{ showToast('❌ Error: '+err); });
+    .then(()=>{
+      dbg('ok','✅ fetch() completed (no-cors)');
+      dbg('warn','Cek Executions di Apps Script!');
+      showToast('✅ Fetch OK — cek Sheet/Discord/Drive');
+    })
+    .catch(err=>{
+      dbg('err','❌ fetch error: '+err);
+      showToast('❌ Fetch error: '+err);
+    });
+}
+
+// Debug helpers
+function dbg(type, msg){
+  const ul=document.getElementById('debug-log');
+  if(!ul) return;
+  const li=document.createElement('li');
+  li.className=type;
+  const t=new Date().toLocaleTimeString('id-ID');
+  li.textContent='['+t+'] '+msg;
+  ul.appendChild(li);
+  ul.parentElement.scrollTop=ul.parentElement.scrollHeight;
+}
+function toggleDebug(){
+  const body=document.getElementById('debug-body');
+  const btn=document.getElementById('debug-toggle-btn');
+  const visible=body.style.display!=='none';
+  body.style.display=visible?'none':'block';
+  btn.textContent=visible?'▲':'▼';
+}
+function clearDebug(){
+  const ul=document.getElementById('debug-log');
+  ul.innerHTML='<li class="info">Log dibersihkan.</li>';
 }
 
 document.addEventListener('keydown',e=>{
@@ -737,6 +813,8 @@ document.addEventListener('keydown',e=>{
 // DUMMY DATA — hapus setelah testing selesai
 // ══════════════════════════════
 function isiDummy(){
+  dbg('head','=== ISI DUMMY dipanggil ===');
+  dbg('info','Mengisi data Budi Santoso...');
   // Intro
   document.getElementById('intro-posisi').value='Marketing Executive';
   document.getElementById('intro-tanggal').value='01/06/2026';
